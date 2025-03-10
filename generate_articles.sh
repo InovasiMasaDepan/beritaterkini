@@ -13,7 +13,7 @@ fi
 ARTICLE_COUNT=$(ls -1 "$ARTICLES_DIR"/*.html 2>/dev/null | wc -l)
 if [ "$ARTICLE_COUNT" -eq 0 ]; then
     echo "⚠️ Tidak ada artikel ditemukan dalam $ARTICLES_DIR!"
-    echo "[]" > "$OUTPUT_FILE"  # Buat file JSON kosong
+    echo "[]" > "$OUTPUT_FILE"
     exit 0
 fi
 
@@ -26,9 +26,9 @@ for file in "$ARTICLES_DIR"/*.html; do
     filename=$(basename -- "$file")
     title=$(echo "$filename" | sed 's/-/ /g' | sed 's/.html//g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
     description="Artikel dari $title!"
-    link="https://inovasimasadepan.github.io/beritaterkini/$ARTICLES_DIR/$filename"
+    link="https://inovasimasadepan.github.io/beritaterkini/articles/$filename"
 
-    echo "✅ Processing: $filename"  
+    echo "✅ Menulis artikel: $title -> $link"  
 
     if [ "$first" = true ]; then
         first=false
