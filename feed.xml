@@ -2,7 +2,7 @@
 <rss version="2.0">
   <channel>
     <title>Inovasi Masa Depan</title>
-    <link>https://username.github.io/</link>
+    <link>https://InovasiMasaDepan.github.io/</link>
     <description>Berita, Informasi, dan Update Terkini</description>
     <language>id</language>
 
@@ -15,7 +15,7 @@
 
     <item>
       <title>Judul Berita Kedua</title>
-      <link>https://username.github.io/berita2.html</link>
+      <link>https://InovasiMasaDepan.github.io/berita2.html</link>
       <description>Ini adalah deskripsi singkat berita kedua.</description>
       <pubDate>Mon, 11 Mar 2025 12:00:00 GMT</pubDate>
     </item>
