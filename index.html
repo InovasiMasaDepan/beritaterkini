@@ -3,18 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Portal berita terbaru seputar teknologi, bisnis, dan inovasi masa depan.">
+    <meta name="description" content="Berita terbaru dan viral seputar teknologi, bisnis, dan inovasi masa depan.">
+    <meta name="robots" content="max-image-preview:large, index, follow">
+    <meta name="author" content="Inovasi Masa Depan">
+    
+    <!-- Open Graph (OG) untuk Facebook & Twitter -->
+    <meta property="og:title" content="Inovasi Masa Depan - Berita Terkini">
+    <meta property="og:description" content="Berita terbaru dan viral seputar teknologi, bisnis, dan inovasi masa depan.">
+    <meta property="og:image" content="https://yourwebsite.com/path-to-thumbnail.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourwebsite.com/berita-terbaru">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="https://yourwebsite.com/favicon.ico" type="image/x-icon">
+    
     <title>Inovasi Masa Depan - Berita Terkini</title>
-    <style>
-        /* Reset dan dasar */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
+    <!-- Schema Markup untuk Google News & Discover -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsMediaOrganization",
+      "name": "Inovasi Masa Depan",
+      "url": "https://yourwebsite.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://yourwebsite.com/logo.png"
+      }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        /* Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
             color: #333;
         }
@@ -25,69 +51,61 @@
             color: white;
             text-align: center;
             padding: 20px;
+            font-size: 1.5rem;
         }
 
         /* Navigasi */
-        nav ul {
-            list-style: none;
-            text-align: center;
+        nav {
             background: #005bb5;
+            text-align: center;
             padding: 10px;
         }
-
+        nav ul {
+            list-style: none;
+        }
         nav ul li {
             display: inline;
             margin: 0 15px;
         }
-
         nav ul li a {
             color: white;
             text-decoration: none;
             font-weight: bold;
+            transition: color 0.3s;
+        }
+        nav ul li a:hover {
+            color: #ffcc00;
         }
 
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
+        /* News Section */
+        .news-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 20px auto;
+            color: white;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #0073e6, #00bfff);
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 115, 230, 0.4);
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .news-title:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 15px rgba(0, 115, 230, 0.6);
         }
 
-        /* Grid berita */
+        /* News Grid */
         .news-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            margin-top: 20px;
-        }
-
-        .news-item {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .news-item h3 {
-            color: #0073e6;
-        }
-
-        .news-item p {
-            font-size: 14px;
-        }
-
-        .news-item a {
-            display: inline-block;
-            margin-top: 10px;
-            color: white;
-            background: #0073e6;
-            padding: 5px 10px;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-
-        .news-item a:hover {
-            background: #005bb5;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 10px;
         }
 
         /* Footer */
@@ -96,19 +114,16 @@
             padding: 10px;
             background: #222;
             color: white;
+            font-size: 0.9rem;
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
-
-    <!-- Header -->
     <header>
         <h1>Inovasi Masa Depan</h1>
         <p>Berita, Informasi, dan Update Terkini</p>
     </header>
-
-    <!-- Navigation Menu -->
     <nav>
         <ul>
             <li><a href="#">Beranda</a></li>
@@ -118,46 +133,12 @@
         </ul>
     </nav>
 
-    <!-- Container -->
-    <div class="container">
-        <h2>Berita Terbaru</h2>
-
-        <!-- Tempat Artikel Muncul -->
-        <div class="news-grid" id="news-container">
-            <!-- Artikel akan muncul otomatis dari articles.json -->
-        </div>
+    <div class="news-grid" id="news-container">
+        <!-- Artikel akan dimuat otomatis di sini -->
     </div>
 
-    <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Inovasi Masa Depan - Semua Hak Cipta Dilindungi</p>
+        &copy; 2025 Inovasi Masa Depan - Semua Hak Cipta Dilindungi
     </footer>
-
-    <!-- Script untuk Load Articles -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch("articles.json") // Pastikan file ini ada
-                .then(response => response.json())
-                .then(data => {
-                    let container = document.getElementById("news-container");
-                    if (!container) {
-                        console.error("❌ Elemen .news-grid tidak ditemukan!");
-                        return;
-                    }
-                    data.forEach(article => {
-                        let articleHTML = `
-                            <div class="news-item">
-                                <h3>${article.title}</h3>
-                                <p>${article.description}</p>
-                                <a href="${article.link}" target="_blank">Baca selengkapnya</a>
-                            </div>
-                        `;
-                        container.innerHTML += articleHTML;
-                    });
-                })
-                .catch(error => console.error("❌ Gagal mengambil articles.json:", error));
-        });
-    </script>
-
 </body>
 </html>
