@@ -1,37 +1,10 @@
-name: Generate Sitemap
-
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-
-jobs:
-  update-sitemap:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Generate Sitemap
-        run: |
-          echo '<?xml version="1.0" encoding="UTF-8"?>' > sitemap.xml
-          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> sitemap.xml
-
-          echo '<url><loc>https://inovasimasadepan.github.io/</loc></url>' >> sitemap.xml
-
-          jq -c '.[]' articles.json | while read i; do
-            link=$(echo $i | jq -r '.link')
-            echo "<url><loc>https://inovasimasadepan.github.io/$link</loc></url>" >> sitemap.xml
-          done
-
-          echo '</urlset>' >> sitemap.xml
-
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          git add sitemap.xml
-          git commit -m "Update Sitemap"
-          git push
+- name: Commit and push changes
+  env:
+    GH_PAT: ${{ secrets.GH_PAT }}
+  run: |
+    git config --global user.name "github-actions"
+    git config --global user.email "actions@github.com"
+    git remote set-url origin https://x-access-token:${GH_PAT}@github.com/InovasiMasaDepan/beritaterkini.git
+    git add .
+    git commit -m "Update Sitemap"
+    git push origin main
