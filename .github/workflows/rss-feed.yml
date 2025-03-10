@@ -16,7 +16,7 @@ jobs:
 
       - name: Generate RSS Feed
         run: |
-          set -e  # Berhenti jika terjadi error
+          set -eo pipefail  # Hentikan script jika terjadi error
 
           # Cek apakah ada file HTML berita di root
           if ls *.html 1> /dev/null 2>&1; then
@@ -24,6 +24,17 @@ jobs:
           else
             echo "🗑️ Tidak ada berita baru, menghapus feed lama..."
             rm -f feed.xml  # Hapus feed.xml lama jika tidak ada berita
+          fi
+
+          # Pastikan articles.json ada dan valid
+          if [[ ! -f articles.json ]]; then
+            echo "⚠️ File articles.json tidak ditemukan! RSS feed tidak diperbarui."
+            exit 1
+          fi
+
+          if ! jq empty articles.json > /dev/null 2>&1; then
+            echo "❌ File articles.json tidak valid JSON!"
+            exit 1
           fi
 
           # Buat ulang feed.xml
@@ -42,9 +53,9 @@ jobs:
             pubDate=$(date -R)
 
             echo '<item>' >> feed.xml
-            echo "  <title>$title</title>" >> feed.xml
+            echo "  <title><![CDATA[$title]]></title>" >> feed.xml
             echo "  <link>https://inovasimasadepan.github.io/$link</link>" >> feed.xml
-            echo "  <description>$desc</description>" >> feed.xml
+            echo "  <description><![CDATA[$desc]]></description>" >> feed.xml
             echo "  <pubDate>$pubDate</pubDate>" >> feed.xml
             echo '</item>' >> feed.xml
           done
@@ -56,6 +67,14 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "github-actions"
           git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/InovasiMasaDepan/beritaterkini.git
+          
           git add feed.xml
-          git commit -m "Update RSS feed"
+          
+          # Cek apakah ada perubahan sebelum commit
+          if git diff --staged --quiet; then
+            echo "✅ Tidak ada perubahan pada RSS feed. Tidak perlu commit."
+            exit 0
+          fi
+
+          git commit -m "🔄 Update RSS feed otomatis"
           git push origin main
