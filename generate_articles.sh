@@ -1,29 +1,42 @@
 #!/bin/bash
 
-# Pastikan script berhenti jika ada error
-set -e
+# Direktori tempat artikel disimpan
+ARTICLES_DIR="articles"
+OUTPUT_FILE="articles.json"
 
-# Hapus file lama dan mulai dengan array kosong
-echo "[" > articles.json
+# Awal JSON
+echo "[" > $OUTPUT_FILE
+
+# Loop semua file dalam folder articles
 first=true
+for file in "$ARTICLES_DIR"/*; do
+    if [ -f "$file" ]; then
+        # Ambil nama file sebagai judul (tanpa ekstensi)
+        title=$(basename "$file" | sed 's/\.[^.]*$//')
 
-# Loop semua file HTML, kecuali index.html
-for file in *.html; do
-    if [[ "$file" != "index.html" ]]; then
-        title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
+        # Ambil 2 baris pertama sebagai deskripsi
+        description=$(head -n 2 "$file" | tr '\n' ' ')
 
-        # Tambahkan koma hanya jika bukan item pertama
+        # Buat URL gambar otomatis berdasarkan nama file
+        image_url="https://inovasimassadepan.github.io/beritaterkini/images/${title}.jpg"
+
+        # Tambahkan koma jika bukan data pertama
         if [ "$first" = true ]; then
             first=false
         else
-            echo "," >> articles.json
+            echo "," >> $OUTPUT_FILE
         fi
-        
-        echo "  { \"title\": \"$title\", \"description\": \"Artikel dari $title\", \"link\": \"$file\" }" >> articles.json
+
+        # Tulis data JSON
+        echo "  {" >> $OUTPUT_FILE
+        echo "    \"judul\": \"$title\"," >> $OUTPUT_FILE
+        echo "    \"gambar\": \"$image_url\"," >> $OUTPUT_FILE
+        echo "    \"konten\": \"$description\"" >> $OUTPUT_FILE
+        echo "  }" >> $OUTPUT_FILE
     fi
 done
 
-# Tutup array JSON
-echo "]" >> articles.json
+# Akhir JSON
+echo "]" >> $OUTPUT_FILE
 
-echo "✅ articles.json berhasil diperbarui!"
+echo "✅ articles.json berhasil dibuat!"
