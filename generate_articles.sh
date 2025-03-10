@@ -4,7 +4,7 @@
 OUTPUT_FILE="articles.json"
 
 # Pastikan ada file HTML di root (kecuali index.html)
-ARTICLE_COUNT=$(ls -1 ./*.html 2>/dev/null | grep -v "index.html" | wc -l)
+ARTICLE_COUNT=$(ls -1 ./*.html 2>/dev/null | grep -v "/index.html$" | wc -l)
 if [ "$ARTICLE_COUNT" -eq 0 ]; then
     echo "⚠️ Tidak ada artikel ditemukan di root!"
     echo "[]" > "$OUTPUT_FILE"  # Buat file JSON kosong
@@ -17,7 +17,7 @@ first=true
 
 # Loop semua file HTML di root (kecuali index.html)
 for file in ./*.html; do
-    [[ "$file" == "./index.html" ]] && continue  # Lewati index.html
+    [[ "$file" == "./index.html" ]] && continue  # Pastikan index.html tidak diproses
 
     filename=$(basename -- "$file")
     
@@ -27,6 +27,12 @@ for file in ./*.html; do
     # Jika title tidak ditemukan, gunakan nama file tanpa .html
     if [[ -z "$title" ]]; then
         title=$(echo "$filename" | sed 's/-/ /g' | sed 's/.html//g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
+    fi
+
+    # Cek jika title adalah "Index", jangan masukkan ke JSON
+    if [[ "$title" == "Index" ]]; then
+        echo "❌ Skip index.html dari daftar artikel."
+        continue
     fi
 
     description="Artikel dari $title!"
