@@ -11,7 +11,7 @@ markdown: kramdown
 plugins:
   - jekyll-sitemap  # Otomatis buat sitemap.xml untuk SEO
   - jekyll-seo-tag  # Tambahkan meta tag SEO (opsional)
-
+  - jekyll-feed
 # Exclude file yang tidak perlu untuk mempercepat build
 exclude:
   - README.md
