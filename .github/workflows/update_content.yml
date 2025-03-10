@@ -53,7 +53,7 @@ jobs:
 
           echo '</urlset>' >> sitemap.xml
 
-      - name: Commit and push changes
+            - name: Commit and push changes
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
@@ -63,3 +63,4 @@ jobs:
           git add articles.json sitemap.xml
           git commit -m "Update articles.json & sitemap.xml"
           git push origin main
+
