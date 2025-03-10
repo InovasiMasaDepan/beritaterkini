@@ -21,12 +21,20 @@ for file in ./*.html; do
 
     filename=$(basename -- "$file")
     
-    # Ambil title dari <title> di dalam file HTML
+    # Ambil title dari tag <title>
     title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file" | head -1)
+
+    # Ambil deskripsi dari meta tag <meta name="description">
+    description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$file" | head -1)
 
     # Jika title tidak ditemukan, gunakan nama file tanpa .html
     if [[ -z "$title" ]]; then
         title=$(echo "$filename" | sed 's/-/ /g' | sed 's/.html//g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
+    fi
+
+    # Jika deskripsi tidak ditemukan, pakai fallback
+    if [[ -z "$description" ]]; then
+        description="Baca artikel terbaru: $title"
     fi
 
     # Cek jika title adalah "Index", jangan masukkan ke JSON
@@ -35,7 +43,6 @@ for file in ./*.html; do
         continue
     fi
 
-    description="Artikel dari $title!"
     link="https://inovasimasadepan.github.io/beritaterkini/$filename"
 
     echo "✅ Processing: $filename ($title)"  
