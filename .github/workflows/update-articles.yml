@@ -1,12 +1,25 @@
-      - name: Generate HTML Articles
-        run: |
-          mkdir -p beritaterkini
-          jq -c '.[]' articles.json | while read i; do
-            title=$(echo $i | jq -r '.title')
-            link=$(echo $i | jq -r '.link')
-            desc=$(echo $i | jq -r '.description')
+- name: Generate HTML Articles
+  run: |
+    # Pastikan direktori beritaterkini ada
+    mkdir -p beritaterkini
 
-            cat > beritaterkini/$link <<EOF
+    # Pastikan articles.json ada dan tidak kosong
+    if [ ! -s articles.json ]; then
+      echo "Error: articles.json tidak ditemukan atau kosong."
+      exit 1
+    fi
+
+    # Loop setiap artikel dari articles.json
+    jq -c '.[]' articles.json | while read i; do
+      title=$(echo $i | jq -r '.title')
+      link=$(echo $i | jq -r '.link')
+      desc=$(echo $i | jq -r '.description')
+
+      # Pastikan link adalah nama file yang valid
+      filename=$(echo "$link" | sed 's/[^a-zA-Z0-9._-]/_/g')
+
+      # Buat file HTML untuk artikel
+      cat > "beritaterkini/$filename" <<EOF
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -26,4 +39,4 @@
 </body>
 </html>
 EOF
-          done
+    done
