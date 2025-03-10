@@ -1,10 +1,21 @@
 document.addEventListener("DOMContentLoaded", function () {
     const newsContainer = document.getElementById("news-container");
 
-    fetch("articles.json")
-        .then(response => response.json())
+    // Cek URL JSON langsung di console
+    const jsonURL = "articles.json?t=" + new Date().getTime();
+    console.log("Fetching articles from:", jsonURL);
+
+    fetch(jsonURL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(articles => {
-            newsContainer.innerHTML = "";
+            console.log("Articles loaded:", articles);
+            newsContainer.innerHTML = ""; // Hapus teks "Memuat berita..."
+
             articles.forEach(article => {
                 const articleElement = document.createElement("article");
                 articleElement.innerHTML = `
@@ -16,6 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => {
             console.error("Error loading articles:", error);
-            newsContainer.innerHTML = "<p>Gagal memuat berita.</p>";
+            newsContainer.innerHTML = "<p>Gagal memuat berita. Silakan coba lagi.</p>";
         });
 });
