@@ -8,26 +8,37 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <!-- Header -->
     <header>
         <h1>Inovasi Masa Depan</h1>
         <p>Berita, Informasi, dan Update Terkini</p>
+        <button id="darkModeToggle">🌙</button>
     </header>
 
-    <!-- Navigation Menu -->
     <nav>
         <ul>
-            <li><a href="#">Beranda</a></li>
+            <li><a href="#">LIVE TOGEL</a></li>
             <li><a href="#">Teknologi</a></li>
             <li><a href="#">Bisnis</a></li>
             <li><a href="#">Inovasi</a></li>
         </ul>
     </nav>
 
-    <!-- Container -->
     <div class="container">
         <h2>Berita Terbaru</h2>
+        <div class="news-grid" id="news-container">
+            <!-- Konten berita akan dimuat di sini secara otomatis -->
+        </div>
+    </div>
 
-        <!-- News Grid -->
-        <div class="news-grid">
+    <footer>
+        <p>&copy; 2025 Inovasi Masa Depan. Semua Hak Dilindungi.</p>
+    </footer>
+
+    <script>
+        // Dark Mode Toggle
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+        });
+    </script>
+</body>
+</html>
