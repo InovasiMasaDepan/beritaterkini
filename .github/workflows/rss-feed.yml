@@ -1,0 +1,48 @@
+name: Generate RSS Feed
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  update-rss:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate RSS Feed
+        run: |
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > feed.xml
+          echo '<rss version="2.0"><channel>' >> feed.xml
+          echo '<title>Inovasi Masa Depan</title>' >> feed.xml
+          echo '<link>https://username.github.io/</link>' >> feed.xml
+          echo '<description>Berita, Informasi, dan Update Terkini</description>' >> feed.xml
+          echo '<language>id</language>' >> feed.xml
+
+          jq -c '.[]' articles.json | while read i; do
+            title=$(echo $i | jq -r '.title')
+            link=$(echo $i | jq -r '.link')
+            desc=$(echo $i | jq -r '.description')
+            pubDate=$(date -R)
+
+            echo '<item>' >> feed.xml
+            echo "<title>$title</title>" >> feed.xml
+            echo "<link>https://username.github.io/$link</link>" >> feed.xml
+            echo "<description>$desc</description>" >> feed.xml
+            echo "<pubDate>$pubDate</pubDate>" >> feed.xml
+            echo '</item>' >> feed.xml
+          done
+
+          echo '</channel></rss>' >> feed.xml
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add feed.xml
+          git commit -m "Update RSS feed"
+          git push
