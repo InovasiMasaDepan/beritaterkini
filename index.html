@@ -12,13 +12,6 @@
     <meta name="keywords" content="berita teknologi, berita bisnis, inovasi terbaru, startup, ekonomi digital, berita viral">
     <link rel="canonical" href="https://inovasimasadepan.github.io/beritaterkini/">
 
-    <!-- Open Graph (OG) untuk Facebook & Twitter -->
-    <meta property="og:title" content="Inovasi Masa Depan - Berita Teknologi & Bisnis Terkini">
-    <meta property="og:description" content="Berita terbaru dan viral seputar teknologi, bisnis, dan inovasi masa depan.">
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://inovasimasadepan.github.io/beritaterkini/">
-    <meta property="og:site_name" content="Inovasi Masa Depan">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
@@ -61,7 +54,7 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 20px;
-        max-width: 1200px;
+        max-width: 800px;
         margin: 20px auto;
         padding: 10px;
     }
@@ -74,11 +67,6 @@
     }
     .news-item:hover {
         transform: scale(1.03);
-    }
-    .news-item img {
-        width: 100%;
-        height: auto;
-        border-radius: 5px;
     }
     .news-item a {
         display: inline-block;
@@ -139,7 +127,6 @@
                 data.forEach(article => {
                     let articleHTML = `
                         <div class="news-item">
-                            <img src="${article.image || 'https://via.placeholder.com/300'}" alt="${article.title}">
                             <h3>${article.title}</h3>
                             <p>${article.description}</p>
                             <a href="${article.link}" target="_blank">Baca selengkapnya</a>
