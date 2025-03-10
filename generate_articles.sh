@@ -3,10 +3,17 @@
 ARTICLES_DIR="articles"
 OUTPUT_FILE="articles.json"
 
-# Cek apakah folder articles ada dan berisi file HTML
-if [ ! -d "$ARTICLES_DIR" ] || [ -z "$(ls -A "$ARTICLES_DIR"/*.html 2>/dev/null)" ]; then
-    echo "[]" > "$OUTPUT_FILE"
-    echo "⚠️ Tidak ada artikel ditemukan. articles.json dibuat kosong."
+# Pastikan folder articles ada
+if [ ! -d "$ARTICLES_DIR" ]; then
+    echo "❌ Folder $ARTICLES_DIR tidak ditemukan!"
+    exit 1
+fi
+
+# Cek apakah ada file .html dalam folder
+ARTICLE_COUNT=$(ls -1 "$ARTICLES_DIR"/*.html 2>/dev/null | wc -l)
+if [ "$ARTICLE_COUNT" -eq 0 ]; then
+    echo "⚠️ Tidak ada artikel ditemukan dalam $ARTICLES_DIR!"
+    echo "[]" > "$OUTPUT_FILE"  # Buat file JSON kosong
     exit 0
 fi
 
@@ -21,7 +28,7 @@ for file in "$ARTICLES_DIR"/*.html; do
     description="Artikel dari $title!"
     link="https://inovasimasadepan.github.io/beritaterkini/$ARTICLES_DIR/$filename"
 
-    echo "Processing: $filename"  
+    echo "✅ Processing: $filename"  
 
     if [ "$first" = true ]; then
         first=false
@@ -36,14 +43,8 @@ for file in "$ARTICLES_DIR"/*.html; do
         "link": "$link"
     }
 EOF
-
 done
 
 echo "]" >> "$OUTPUT_FILE"
 
-# Pastikan JSON valid dengan jq (jika tersedia)
-if command -v jq &> /dev/null; then
-    jq '.' "$OUTPUT_FILE" > temp.json && mv temp.json "$OUTPUT_FILE"
-fi
-
-echo "✅ articles.json berhasil diperbarui dengan $(ls -1 "$ARTICLES_DIR"/*.html 2>/dev/null | wc -l) artikel!"
+echo "✅ articles.json berhasil diperbarui dengan $ARTICLE_COUNT artikel!"
