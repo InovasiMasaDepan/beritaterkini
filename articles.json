@@ -1,12 +1,9 @@
-[
-    {
-        "title": "Judul Berita Pertama",
-        "description": "Ini adalah deskripsi singkat berita pertama.",
-        "link": "berita1.html"
-    },
-    {
-        "title": "Judul Berita Kedua",
-        "description": "Ini adalah deskripsi singkat berita kedua.",
-        "link": "berita2.html"
-    }
-]
+echo "[" > articles.json
+for file in *.html; do
+    if [[ "$file" != "index.html" ]]; then
+        title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
+        echo "  { \"title\": \"$title\", \"description\": \"Artikel dari $title\", \"link\": \"$file\" }," >> articles.json
+    fi
+done
+sed -i '$ s/,$//' articles.json  # Hapus koma terakhir
+echo "]" >> articles.json
