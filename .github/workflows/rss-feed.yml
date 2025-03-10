@@ -69,8 +69,8 @@ jobs:
 
     git add feed.xml
     if git diff --cached --quiet; then
-      echo "✅ Tidak ada perubahan, tidak perlu commit."
-      exit 0
+      echo "✅ Tidak ada perubahan pada RSS feed, proses selesai."
+      exit 0  # Berhenti tanpa error jika tidak ada perubahan
     fi
 
     git commit -m "🔄 Update RSS feed"
