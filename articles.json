@@ -1,3 +1,2 @@
-git add articles.json
-git diff --staged --quiet || git commit -m "🔄 Update articles.json otomatis"
-git push
+[
+]
