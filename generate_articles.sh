@@ -14,6 +14,7 @@ for file in "$ARTICLES_DIR"/*.html; do
     filename=$(basename -- "$file")
     title=$(echo "$filename" | sed 's/-/ /g' | sed 's/.html//g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
     description="Artikel dari $title!"
+    link="https://inovasimasadepan.github.io/beritaterkini/$ARTICLES_DIR/$filename"
 
     # Tambah koma kecuali untuk item pertama
     if [ "$first" = true ]; then
@@ -25,7 +26,8 @@ for file in "$ARTICLES_DIR"/*.html; do
     # Tambah item JSON
     echo "    {" >> "$OUTPUT_FILE"
     echo "        \"title\": \"$title\"," >> "$OUTPUT_FILE"
-    echo "        \"description\": \"$description\"" >> "$OUTPUT_FILE"
+    echo "        \"description\": \"$description\"," >> "$OUTPUT_FILE"
+    echo "        \"link\": \"$link\"" >> "$OUTPUT_FILE"
     echo "    }" >> "$OUTPUT_FILE"
 done
 
