@@ -19,7 +19,7 @@ jobs:
           echo '<?xml version="1.0" encoding="UTF-8"?>' > feed.xml
           echo '<rss version="2.0"><channel>' >> feed.xml
           echo '<title>Inovasi Masa Depan</title>' >> feed.xml
-          echo '<link>https://username.github.io/</link>' >> feed.xml
+          echo '<link>https://inovasimasadepan.github.io/</link>' >> feed.xml
           echo '<description>Berita, Informasi, dan Update Terkini</description>' >> feed.xml
           echo '<language>id</language>' >> feed.xml
 
@@ -31,7 +31,7 @@ jobs:
 
             echo '<item>' >> feed.xml
             echo "<title>$title</title>" >> feed.xml
-            echo "<link>https://username.github.io/$link</link>" >> feed.xml
+            echo "<link>https://inovasimasadepan.github.io/$link</link>" >> feed.xml
             echo "<description>$desc</description>" >> feed.xml
             echo "<pubDate>$pubDate</pubDate>" >> feed.xml
             echo '</item>' >> feed.xml
