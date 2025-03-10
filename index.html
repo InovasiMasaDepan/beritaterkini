@@ -58,6 +58,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
 
         .news-item {
@@ -75,6 +76,20 @@
             font-size: 14px;
         }
 
+        .news-item a {
+            display: inline-block;
+            margin-top: 10px;
+            color: white;
+            background: #0073e6;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .news-item a:hover {
+            background: #005bb5;
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -82,21 +97,6 @@
             background: #222;
             color: white;
             margin-top: 20px;
-        }
-
-        /* Mode gelap */
-        .dark-mode {
-            background-color: #222;
-            color: white;
-        }
-
-        .dark-mode nav ul {
-            background: #444;
-        }
-
-        .dark-mode .news-grid div {
-            background: #333;
-            color: white;
         }
     </style>
 </head>
@@ -122,10 +122,42 @@
     <div class="container">
         <h2>Berita Terbaru</h2>
 
+        <!-- Tempat Artikel Muncul -->
+        <div class="news-grid" id="news-container">
+            <!-- Artikel akan muncul otomatis dari articles.json -->
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <p>&copy; 2025 Inovasi Masa Depan - Semua Hak Cipta Dilindungi</p>
     </footer>
+
+    <!-- Script untuk Load Articles -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("articles.json") // Pastikan file ini ada
+                .then(response => response.json())
+                .then(data => {
+                    let container = document.getElementById("news-container");
+                    if (!container) {
+                        console.error("❌ Elemen .news-grid tidak ditemukan!");
+                        return;
+                    }
+                    data.forEach(article => {
+                        let articleHTML = `
+                            <div class="news-item">
+                                <h3>${article.title}</h3>
+                                <p>${article.description}</p>
+                                <a href="${article.link}" target="_blank">Baca selengkapnya</a>
+                            </div>
+                        `;
+                        container.innerHTML += articleHTML;
+                    });
+                })
+                .catch(error => console.error("❌ Gagal mengambil articles.json:", error));
+        });
+    </script>
 
 </body>
 </html>
