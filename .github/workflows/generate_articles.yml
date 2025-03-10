@@ -1,29 +1,38 @@
-#!/bin/bash
+name: Update Articles JSON
 
-# Pastikan script berhenti jika ada error
-set -e
+on:
+  push:
+    paths:
+      - "*.html"   # Hanya jalan kalau ada perubahan file HTML di root
+  workflow_dispatch:  # Bisa dijalankan manual juga
 
-# Hapus file lama dan mulai dengan array kosong
-echo "[" > articles.json
-first=true
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
 
-# Loop semua file HTML, kecuali index.html
-for file in *.html; do
-    if [[ "$file" != "index.html" ]]; then
-        title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-        # Tambahkan koma hanya jika bukan item pertama
-        if [ "$first" = true ]; then
-            first=false
-        else
-            echo "," >> articles.json
-        fi
-        
-        echo "  { \"title\": \"$title\", \"description\": \"Artikel dari $title\", \"link\": \"$file\" }" >> articles.json
-    fi
-done
+      - name: Jalankan generate_articles.sh
+        run: |
+          chmod +x generate_articles.sh
+          ./generate_articles.sh
 
-# Tutup array JSON
-echo "]" >> articles.json
+      - name: Periksa perubahan pada articles.json
+        run: |
+          git status
+          git diff --stat articles.json
 
-echo "✅ articles.json berhasil diperbarui!"
+      - name: Commit & Push Perubahan
+        if: success()
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add articles.json
+          if git diff --cached --quiet; then
+            echo "✅ Tidak ada perubahan pada articles.json. Tidak perlu commit."
+            exit 0
+          fi
+          git commit -m "🔄 Update articles.json otomatis"
+          git push origin main
