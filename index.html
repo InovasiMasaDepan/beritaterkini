@@ -18,56 +18,48 @@
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://inovasimasadepan.github.io/beritaterkini/">
     <meta property="og:site_name" content="Inovasi Masa Depan">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Inovasi Masa Depan - Berita Teknologi & Bisnis">
-    <meta name="twitter:description" content="Berita terbaru dan viral seputar teknologi, bisnis, dan inovasi masa depan.">
 
-    <!-- Schema Markup untuk Google News & Discover -->
+    <!-- Schema Markup -->
     <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "NewsArticle",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://inovasimasadepan.github.io/beritaterkini/"
-  },
-  "headline": "Inovasi Masa Depan - Berita Teknologi & Bisnis Terkini",
-  "datePublished": "{{ page.date | date_to_xmlschema }}",
-  "dateModified": "{{ page.last_modified_at | date_to_xmlschema }}",
-  "author": {
-    "@type": "Organization",
-    "name": "Tim Redaksi Inovasi Masa Depan"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Inovasi Masa Depan",
-    "logo": {
-      "@type": "ImageObject",
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://inovasimasadepan.github.io/beritaterkini/"
+      },
+      "headline": "Inovasi Masa Depan - Berita Teknologi & Bisnis Terkini",
+      "datePublished": "2025-03-10",
+      "dateModified": "2025-03-10",
+      "author": {
+        "@type": "Organization",
+        "name": "Tim Redaksi Inovasi Masa Depan"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Inovasi Masa Depan",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://inovasimasadepan.github.io/logo.png"
+        }
+      },
+      "description": "Berita terbaru dan viral seputar teknologi, bisnis, dan inovasi masa depan. Update harian dengan analisis mendalam.",
+      "news_keywords": "teknologi, bisnis, startup, ekonomi digital, inovasi, berita terbaru",
+      "articleSection": "Teknologi",
+      "isAccessibleForFree": "True"
     }
-  },
-  "description": "Berita terbaru dan viral seputar teknologi, bisnis, dan inovasi masa depan. Update harian dengan analisis mendalam.",
-  "news_keywords": "teknologi, bisnis, startup, ekonomi digital, inovasi, berita terbaru",
-  "articleSection": "Teknologi",
-  "isAccessibleForFree": "True"
-}
-</script>
-
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
-        /* Reset */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
             color: #333;
         }
-
-        /* Header */
         header {
             background: #0073e6;
             color: white;
@@ -75,8 +67,6 @@
             padding: 20px;
             font-size: 1.5rem;
         }
-
-        /* Navigasi */
         nav {
             background: #005bb5;
             text-align: center;
@@ -98,29 +88,6 @@
         nav ul li a:hover {
             color: #ffcc00;
         }
-
-        /* News Section */
-        .news-title {
-            text-align: center;
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 20px auto;
-            color: white;
-            padding: 15px 30px;
-            background: linear-gradient(45deg, #0073e6, #00bfff);
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 115, 230, 0.4);
-            display: inline-block;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        }
-        .news-title:hover {
-            transform: scale(1.05);
-            box-shadow: 0px 6px 15px rgba(0, 115, 230, 0.6);
-        }
-
-        /* News Grid */
         .news-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -129,8 +96,6 @@
             margin: 20px auto;
             padding: 10px;
         }
-
-        /* News Item */
         .news-item {
             background: white;
             padding: 15px;
@@ -146,26 +111,6 @@
             height: auto;
             border-radius: 5px;
         }
-        .news-item h3 {
-            margin: 10px 0;
-            font-size: 1.2rem;
-        }
-        .news-item p {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        .news-item a {
-            display: inline-block;
-            margin-top: 10px;
-            text-decoration: none;
-            color: #0073e6;
-            font-weight: bold;
-        }
-        .news-item a:hover {
-            text-decoration: underline;
-        }
-
-        /* Footer */
         footer {
             text-align: center;
             padding: 10px;
@@ -183,30 +128,30 @@
     </header>
     <nav>
         <ul>
-            <li><a href="#">Beranda</a></li>
-            <li><a href="#">Teknologi</a></li>
-            <li><a href="#">Bisnis</a></li>
-            <li><a href="#">Inovasi</a></li>
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="teknologi.html">Teknologi</a></li>
+            <li><a href="bisnis.html">Bisnis</a></li>
+            <li><a href="inovasi.html">Inovasi</a></li>
         </ul>
     </nav>
 
     <div class="news-grid" id="news-container">
-        <!-- Artikel akan dimuat otomatis di sini -->
+        <p>🔄 Memuat berita terbaru...</p>
     </div>
 
     <footer>
         &copy; 2025 Inovasi Masa Depan - Semua Hak Cipta Dilindungi
     </footer>
 
-    <!-- Script untuk Load Articles -->
     <script>
         document.addEventListener("DOMContentLoaded", async function () {
             try {
-                let response = await fetch("articles.json");
+                let response = await fetch("https://inovasimasadepan.github.io/beritaterkini/articles.json?t=" + new Date().getTime());
                 if (!response.ok) throw new Error("Gagal memuat articles.json");
 
                 let data = await response.json();
                 let container = document.getElementById("news-container");
+                container.innerHTML = "";
 
                 data.forEach(article => {
                     let articleHTML = `
