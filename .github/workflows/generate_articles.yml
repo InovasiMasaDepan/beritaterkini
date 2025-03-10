@@ -1,28 +1,29 @@
-- name: Checkout repository
-         uses: actions/checkout@v3
- 
-       - name: Generate articles.json
-       - name: Pastikan script tersedia
-         run: |
-           chmod +x generate_articles.sh
-           ./generate_articles.sh
-           if [ ! -f generate_articles.sh ]; then
-             echo "❌ File generate_articles.sh tidak ditemukan!"
-             exit 1
-           fi
- 
-       - name: Ubah permission script
-         run: chmod +x generate_articles.sh
- 
-       - name: Generate articles.json
-         run: ./generate_articles.sh
- 
-       - name: Commit and push changes
-       - name: Commit dan push perubahan
-         run: |
-           git config --global user.name "github-actions"
-           git config --global user.email "actions@github.com"
-           git add articles.json
-           git commit -m "🔄 Update articles.json otomatis" || echo "No changes to commit"
-           git commit -m "🔄 Update articles.json otomatis" || echo "Tidak ada perubahan untuk di-commit"
-           git push
+#!/bin/bash
+
+# Pastikan script berhenti jika ada error
+set -e
+
+# Hapus file lama dan mulai dengan array kosong
+echo "[" > articles.json
+first=true
+
+# Loop semua file HTML, kecuali index.html
+for file in *.html; do
+    if [[ "$file" != "index.html" ]]; then
+        title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
+
+        # Tambahkan koma hanya jika bukan item pertama
+        if [ "$first" = true ]; then
+            first=false
+        else
+            echo "," >> articles.json
+        fi
+        
+        echo "  { \"title\": \"$title\", \"description\": \"Artikel dari $title\", \"link\": \"$file\" }" >> articles.json
+    fi
+done
+
+# Tutup array JSON
+echo "]" >> articles.json
+
+echo "✅ articles.json berhasil diperbarui!"
