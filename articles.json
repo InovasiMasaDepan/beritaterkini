@@ -1,17 +1,29 @@
+#!/bin/bash
+
+# Inisialisasi articles.json
 echo "[" > articles.json
 first=true
+
+# Loop untuk semua file HTML (kecuali index.html)
 for file in *.html; do
     if [[ "$file" != "index.html" ]]; then
+        # Ambil title dari file HTML (gunakan grep untuk mengekstrak isi tag <title>)
         title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
-        
-        # Tambahkan koma hanya jika bukan item pertama
-        if [ "$first" = true ]; then
-            first=false
-        else
-            echo "," >> articles.json
+
+        # Pastikan title tidak kosong agar tidak ada entri kosong di JSON
+        if [[ -n "$title" ]]; then
+            # Tambahkan koma hanya jika bukan item pertama
+            if [ "$first" = true ]; then
+                first=false
+            else
+                echo "," >> articles.json
+            fi
+
+            # Tulis ke articles.json
+            echo "  { \"title\": \"$title\", \"description\": \"Artikel dari $title\", \"link\": \"$file\" }" >> articles.json
         fi
-        
-        echo "  { \"title\": \"$title\", \"description\": \"Artikel dari $title\", \"link\": \"$file\" }" >> articles.json
     fi
 done
+
+# Tutup array JSON
 echo "]" >> articles.json
