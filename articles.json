@@ -1,9 +1,17 @@
 echo "[" > articles.json
+first=true
 for file in *.html; do
     if [[ "$file" != "index.html" ]]; then
         title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
-        echo "  { \"title\": \"$title\", \"description\": \"Artikel dari $title\", \"link\": \"$file\" }," >> articles.json
+        
+        # Tambahkan koma hanya jika bukan item pertama
+        if [ "$first" = true ]; then
+            first=false
+        else
+            echo "," >> articles.json
+        fi
+        
+        echo "  { \"title\": \"$title\", \"description\": \"Artikel dari $title\", \"link\": \"$file\" }" >> articles.json
     fi
 done
-sed -i '$ s/,$//' articles.json  # Hapus koma terakhir
 echo "]" >> articles.json
