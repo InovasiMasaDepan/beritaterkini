@@ -1,29 +1,3 @@
-#!/bin/bash
-
-# Inisialisasi articles.json
-echo "[" > articles.json
-first=true
-
-# Loop untuk semua file HTML (kecuali index.html)
-for file in *.html; do
-    if [[ "$file" != "index.html" ]]; then
-        # Ambil title dari file HTML (gunakan grep untuk mengekstrak isi tag <title>)
-        title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
-
-        # Pastikan title tidak kosong agar tidak ada entri kosong di JSON
-        if [[ -n "$title" ]]; then
-            # Tambahkan koma hanya jika bukan item pertama
-            if [ "$first" = true ]; then
-                first=false
-            else
-                echo "," >> articles.json
-            fi
-
-            # Tulis ke articles.json
-            echo "  { \"title\": \"$title\", \"description\": \"Artikel dari $title\", \"link\": \"$file\" }" >> articles.json
-        fi
-    fi
-done
-
-# Tutup array JSON
-echo "]" >> articles.json
+[
+  { "title": "Viral! Pelajar Ini Bongkar Pola Scatter Starlight Princess, Pemain Slot Heboh!", "description": "Artikel dari Viral! Pelajar Ini Bongkar Pola Scatter Starlight Princess, Pemain Slot Heboh!", "link": "Pelajar-SMA-Ini-Secara-Tak-Terduga-Menemukan-Trik-Scatter-di-Starlight-Princess-dan-Kini-Jadi-Idola-Pemain-Game-Slot-Online.html" }
+]
