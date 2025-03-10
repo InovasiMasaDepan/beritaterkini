@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-  <channel>
-    <title>Inovasi Masa Depan</title>
-    <link>https://InovasiMasaDepan.github.io/</link>
-    <description>Berita, Informasi, dan Update Terkini</description>
-    <language>id</language>
-
-    <item>
-      <title>Judul Berita Pertama</title>
-      <link>https://InovasiMasaDepan.github.io/berita1.html</link>
-      <description>Ini adalah deskripsi singkat berita pertama.</description>
-      <pubDate>Mon, 11 Mar 2025 10:00:00 GMT</pubDate>
-    </item>
-
-    <item>
-      <title>Judul Berita Kedua</title>
-      <link>https://InovasiMasaDepan.github.io/berita2.html</link>
-      <description>Ini adalah deskripsi singkat berita kedua.</description>
-      <pubDate>Mon, 11 Mar 2025 12:00:00 GMT</pubDate>
-    </item>
-
-  </channel>
-</rss>
+<rss version="2.0"><channel>
+<title>Inovasi Masa Depan</title>
+<link>https://inovasimasadepan.github.io/</link>
+<description>Berita, Informasi, dan Update Terkini</description>
+<language>id</language>
+</channel></rss>
