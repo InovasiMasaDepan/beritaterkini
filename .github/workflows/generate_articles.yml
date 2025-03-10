@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "articles/**"
+      - "generate_articles.sh"
   workflow_dispatch:  # Bisa dijalankan manual juga
 
 jobs:
@@ -32,8 +33,13 @@ jobs:
         git status
         git diff --stat articles.json
 
+    - name: Debug Output
+      run: cat articles.json  # Menampilkan isi articles.json untuk debugging
+
     - name: Commit & Push Perubahan
       if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "actions@github.com"
@@ -43,4 +49,4 @@ jobs:
           exit 0
         fi
         git commit -m "🔄 Update articles.json otomatis"
-        git push origin main
+        git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git main
