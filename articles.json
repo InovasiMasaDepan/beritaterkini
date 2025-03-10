@@ -1,9 +1,2 @@
-set -e  # Hentikan script jika terjadi error
-
-git add articles.json
-if ! git diff --staged --quiet; then
-  git commit -m "🔄 Update articles.json otomatis"
-  git push
-else
-  echo "✅ Tidak ada perubahan pada articles.json. Tidak perlu commit."
-fi
+[
+]
