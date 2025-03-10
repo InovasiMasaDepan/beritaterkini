@@ -16,6 +16,17 @@ jobs:
 
       - name: Generate RSS Feed
         run: |
+          set -e  # Berhenti jika terjadi error
+
+          # Cek apakah ada file HTML berita di root
+          if ls *.html 1> /dev/null 2>&1; then
+            echo "📢 Berita baru ditemukan! Feed lama tetap dipertahankan."
+          else
+            echo "🗑️ Tidak ada berita baru, menghapus feed lama..."
+            rm -f feed.xml  # Hapus feed.xml lama jika tidak ada berita
+          fi
+
+          # Buat ulang feed.xml
           echo '<?xml version="1.0" encoding="UTF-8"?>' > feed.xml
           echo '<rss version="2.0"><channel>' >> feed.xml
           echo '<title>Inovasi Masa Depan</title>' >> feed.xml
@@ -23,17 +34,18 @@ jobs:
           echo '<description>Berita, Informasi, dan Update Terkini</description>' >> feed.xml
           echo '<language>id</language>' >> feed.xml
 
-          jq -c '.[]' articles.json | while read i; do
-            title=$(echo $i | jq -r '.title')
-            link=$(echo $i | jq -r '.link')
-            desc=$(echo $i | jq -r '.description')
+          # Tambahkan berita dari articles.json ke RSS
+          jq -c '.[]' articles.json | while read -r i; do
+            title=$(echo "$i" | jq -r '.title')
+            link=$(echo "$i" | jq -r '.link')
+            desc=$(echo "$i" | jq -r '.description')
             pubDate=$(date -R)
 
             echo '<item>' >> feed.xml
-            echo "<title>$title</title>" >> feed.xml
-            echo "<link>https://inovasimasadepan.github.io/$link</link>" >> feed.xml
-            echo "<description>$desc</description>" >> feed.xml
-            echo "<pubDate>$pubDate</pubDate>" >> feed.xml
+            echo "  <title>$title</title>" >> feed.xml
+            echo "  <link>https://inovasimasadepan.github.io/$link</link>" >> feed.xml
+            echo "  <description>$desc</description>" >> feed.xml
+            echo "  <pubDate>$pubDate</pubDate>" >> feed.xml
             echo '</item>' >> feed.xml
           done
 
@@ -41,9 +53,9 @@ jobs:
 
       - name: Commit and push changes
         run: |
-    git config --global user.email "actions@github.com"
-    git config --global user.name "github-actions"
-    git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/InovasiMasaDepan/beritaterkini.git
-    git add .
-    git commit -m "Update RSS feed"
-    git push origin main
+          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/InovasiMasaDepan/beritaterkini.git
+          git add feed.xml
+          git commit -m "Update RSS feed"
+          git push origin main
