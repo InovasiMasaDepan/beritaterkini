@@ -3,35 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Berita terbaru dan viral seputar teknologi, bisnis, dan inovasi masa depan.">
+    
+    <title>Inovasi Masa Depan - Berita Teknologi & Bisnis Terkini</title>
+    
+    <meta name="description" content="Berita terbaru dan viral seputar teknologi, bisnis, dan inovasi masa depan. Update harian dengan analisis mendalam.">
     <meta name="robots" content="max-image-preview:large, index, follow">
     <meta name="author" content="Inovasi Masa Depan">
-    
+    <meta name="keywords" content="berita teknologi, berita bisnis, inovasi terbaru, startup, ekonomi digital, berita viral">
+    <link rel="canonical" href="https://inovasimasadepan.github.io/beritaterkini/">
+
     <!-- Open Graph (OG) untuk Facebook & Twitter -->
-    <meta property="og:title" content="Inovasi Masa Depan - Berita Terkini">
+    <meta property="og:title" content="Inovasi Masa Depan - Berita Teknologi & Bisnis Terkini">
     <meta property="og:description" content="Berita terbaru dan viral seputar teknologi, bisnis, dan inovasi masa depan.">
-    <meta property="og:image" content="https://yourwebsite.com/path-to-thumbnail.jpg">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://yourwebsite.com/berita-terbaru">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://inovasimasadepan.github.io/beritaterkini/">
+    <meta property="og:site_name" content="Inovasi Masa Depan">
     
-    <!-- Favicon -->
-    <link rel="icon" href="https://yourwebsite.com/favicon.ico" type="image/x-icon">
-    
-    <title>Inovasi Masa Depan - Berita Terkini</title>
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Inovasi Masa Depan - Berita Teknologi & Bisnis">
+    <meta name="twitter:description" content="Berita terbaru dan viral seputar teknologi, bisnis, dan inovasi masa depan.">
 
     <!-- Schema Markup untuk Google News & Discover -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "NewsMediaOrganization",
-      "name": "Inovasi Masa Depan",
-      "url": "https://yourwebsite.com",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://yourwebsite.com/logo.png"
-      }
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://inovasimasadepan.github.io/beritaterkini/"
+  },
+  "headline": "Inovasi Masa Depan - Berita Teknologi & Bisnis Terkini",
+  "datePublished": "{{ page.date | date_to_xmlschema }}",
+  "dateModified": "{{ page.last_modified_at | date_to_xmlschema }}",
+  "author": {
+    "@type": "Organization",
+    "name": "Tim Redaksi Inovasi Masa Depan"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Inovasi Masa Depan",
+    "logo": {
+      "@type": "ImageObject",
     }
-    </script>
+  },
+  "description": "Berita terbaru dan viral seputar teknologi, bisnis, dan inovasi masa depan. Update harian dengan analisis mendalam.",
+  "news_keywords": "teknologi, bisnis, startup, ekonomi digital, inovasi, berita terbaru",
+  "articleSection": "Teknologi",
+  "isAccessibleForFree": "True"
+}
+</script>
+
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -108,6 +130,41 @@
             padding: 10px;
         }
 
+        /* News Item */
+        .news-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+        .news-item:hover {
+            transform: scale(1.03);
+        }
+        .news-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .news-item h3 {
+            margin: 10px 0;
+            font-size: 1.2rem;
+        }
+        .news-item p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .news-item a {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #0073e6;
+            font-weight: bold;
+        }
+        .news-item a:hover {
+            text-decoration: underline;
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -140,5 +197,33 @@
     <footer>
         &copy; 2025 Inovasi Masa Depan - Semua Hak Cipta Dilindungi
     </footer>
+
+    <!-- Script untuk Load Articles -->
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            try {
+                let response = await fetch("articles.json");
+                if (!response.ok) throw new Error("Gagal memuat articles.json");
+
+                let data = await response.json();
+                let container = document.getElementById("news-container");
+
+                data.forEach(article => {
+                    let articleHTML = `
+                        <div class="news-item">
+                            <img src="${article.image || 'https://via.placeholder.com/300'}" alt="${article.title}">
+                            <h3>${article.title}</h3>
+                            <p>${article.description}</p>
+                            <a href="${article.link}" target="_blank">Baca selengkapnya</a>
+                        </div>
+                    `;
+                    container.innerHTML += articleHTML;
+                });
+            } catch (error) {
+                console.error("❌ Error:", error);
+                document.getElementById("news-container").innerHTML = "<p style='color:red;'>⚠️ Gagal memuat berita!</p>";
+            }
+        });
+    </script>
 </body>
 </html>
