@@ -4,7 +4,6 @@ on:
   push:
     paths:
       - "articles/**"
-      - "images/**"
   workflow_dispatch:  # Bisa dijalankan manual juga
 
 jobs:
@@ -15,16 +14,33 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Pastikan script tersedia
+      run: |
+        if [ ! -f generate_articles.sh ]; then
+          echo "❌ File generate_articles.sh tidak ditemukan!"
+          exit 1
+        fi
+
     - name: Beri izin eksekusi pada script
       run: chmod +x generate_articles.sh
 
     - name: Jalankan generate_articles.sh
       run: ./generate_articles.sh
 
+    - name: Periksa perubahan pada articles.json
+      run: |
+        git status
+        git diff --stat articles.json
+
     - name: Commit & Push Perubahan
+      if: success()
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "actions@github.com"
         git add articles.json
+        if git diff --cached --quiet; then
+          echo "✅ Tidak ada perubahan pada articles.json. Tidak perlu commit."
+          exit 0
+        fi
         git commit -m "🔄 Update articles.json otomatis"
-        git push
+        git push origin main
