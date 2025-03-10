@@ -5,40 +5,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Portal berita terbaru seputar teknologi, bisnis, dan inovasi masa depan.">
     <title>Inovasi Masa Depan - Berita Terkini</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Reset dan dasar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background: #0073e6;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Navigasi */
+        nav ul {
+            list-style: none;
+            text-align: center;
+            background: #005bb5;
+            padding: 10px;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* Grid berita */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .news-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-item h3 {
+            color: #0073e6;
+        }
+
+        .news-item p {
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: #222;
+            color: white;
+            margin-top: 20px;
+        }
+
+        /* Mode gelap */
+        .dark-mode {
+            background-color: #222;
+            color: white;
+        }
+
+        .dark-mode nav ul {
+            background: #444;
+        }
+
+        .dark-mode .news-grid div {
+            background: #333;
+            color: white;
+        }
+    </style>
 </head>
 <body>
+
+    <!-- Header -->
     <header>
         <h1>Inovasi Masa Depan</h1>
         <p>Berita, Informasi, dan Update Terkini</p>
-        <button id="darkModeToggle">🌙</button>
     </header>
 
+    <!-- Navigation Menu -->
     <nav>
         <ul>
-            <li><a href="#">LIVE TOGEL</a></li>
+            <li><a href="#">Beranda</a></li>
             <li><a href="#">Teknologi</a></li>
             <li><a href="#">Bisnis</a></li>
             <li><a href="#">Inovasi</a></li>
         </ul>
     </nav>
 
+    <!-- Container -->
     <div class="container">
         <h2>Berita Terbaru</h2>
-        <div class="news-grid" id="news-container">
-            <!-- Konten berita akan dimuat di sini secara otomatis -->
-        </div>
-    </div>
 
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Inovasi Masa Depan. Semua Hak Dilindungi.</p>
+        <p>&copy; 2025 Inovasi Masa Depan - Semua Hak Cipta Dilindungi</p>
     </footer>
 
-    <script>
-        // Dark Mode Toggle
-        document.getElementById('darkModeToggle').addEventListener('click', function() {
-            document.body.classList.toggle('dark-mode');
-        });
-    </script>
 </body>
 </html>
