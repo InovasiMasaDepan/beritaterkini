@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 Allow: /
-Sitemap: https://premierbolagg.github.io/Insight-Nusantara/sitemap.xml
+Sitemap: https://inovasimasadepan.github.io/beritaterkini/sitemap.xml
