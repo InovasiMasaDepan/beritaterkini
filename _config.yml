@@ -1,25 +1,40 @@
 title: "Inovasi Masa Depan"
 description: "Inovasi Masa Depan - Berita, informasi, dan update terkini dari seluruh dunia"
 url: "https://inovasimasadepan.github.io"  # URL utama situs
-baseurl: "/beritaterkini"  # Jika situs Anda berada di subfolder GitHub Pages
+baseurl: "/beritaterkini"  # Subfolder jika ada
 
 # Pastikan timezone dan markdown sesuai
 timezone: "Asia/Jakarta"
 markdown: kramdown
 
-# Tambahkan tema default agar GitHub Pages bisa build
-theme: minima
+# Tema default agar bisa build dengan GitHub Pages
+remote_theme: jekyll/minima  # Gunakan tema yang kompatibel dengan GitHub Pages
 
-# Pengaturan tambahan untuk GitHub Pages
+# Pastikan build berjalan aman
 safe: true
 lsi: false
 permalink: pretty
 
-# Plugin tambahan jika diperlukan
+# Plugin tambahan yang disarankan
 plugins:
-  - jekyll-sitemap  # Otomatis buat sitemap.xml untuk SEO
-  - jekyll-seo-tag  # Tambahkan meta tag SEO (opsional)
-  - jekyll-feed
+  - jekyll-sitemap    # Buat sitemap.xml untuk SEO
+  - jekyll-seo-tag    # Tambahkan meta tag SEO
+  - jekyll-feed       # RSS feed otomatis
+  - jekyll-paginate   # Pagination untuk daftar artikel
+
+# Aktifkan pagination (opsional, jika ada banyak artikel)
+paginate: 10
+paginate_path: "/page:num/"
+
+# Pastikan future post bisa ditampilkan
+future: true
+
+# Default layout untuk setiap file
+defaults:
+  - scope:
+      path: ""  # Semua file
+    values:
+      layout: "post"
 
 # Exclude file yang tidak perlu untuk mempercepat build
 exclude:
@@ -28,3 +43,6 @@ exclude:
   - Gemfile.lock
   - node_modules
   - vendor
+  - .github
+  - .gitignore
+  - _site
