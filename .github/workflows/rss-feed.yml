@@ -48,13 +48,13 @@ jobs:
           # Tambahkan berita dari articles.json ke RSS
           jq -c '.[]' articles.json | while read -r i; do
             title=$(echo "$i" | jq -r '.title')
-            link=$(echo "$i" | jq -r '.link')
+            link=$(echo "$i" | jq -r '.link')  # Ambil link relatif saja
             desc=$(echo "$i" | jq -r '.description')
             pubDate=$(date -R)
 
             echo '<item>' >> feed.xml
             echo "  <title><![CDATA[$title]]></title>" >> feed.xml
-            echo "  <link>https://inovasimasadepan.github.io/$link</link>" >> feed.xml
+            echo "  <link>https://inovasimasadepan.github.io$link</link>" >> feed.xml  # Gabungkan dengan URL base
             echo "  <description><![CDATA[$desc]]></description>" >> feed.xml
             echo "  <pubDate>$pubDate</pubDate>" >> feed.xml
             echo '</item>' >> feed.xml
