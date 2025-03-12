@@ -52,6 +52,7 @@ jobs:
             desc=$(echo "$i" | jq -r '.description')
             pubDate=$(date -R)
 
+            # Pastikan link adalah relatif dan bukan URL lengkap
             echo '<item>' >> feed.xml
             echo "  <title><![CDATA[$title]]></title>" >> feed.xml
             echo "  <link>https://inovasimasadepan.github.io$link</link>" >> feed.xml  # Gabungkan dengan URL base
