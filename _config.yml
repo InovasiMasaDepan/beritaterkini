@@ -4,14 +4,23 @@ url: "https://inovasimasadepan.github.io"  # URL utama situs
 baseurl: "/beritaterkini"  # Jika situs Anda berada di subfolder GitHub Pages
 
 # Pastikan timezone dan markdown sesuai
-timezone: Asia/Jakarta  
-markdown: kramdown  
+timezone: "Asia/Jakarta"
+markdown: kramdown
+
+# Tambahkan tema default agar GitHub Pages bisa build
+theme: minima
+
+# Pengaturan tambahan untuk GitHub Pages
+safe: true
+lsi: false
+permalink: pretty
 
 # Plugin tambahan jika diperlukan
 plugins:
   - jekyll-sitemap  # Otomatis buat sitemap.xml untuk SEO
   - jekyll-seo-tag  # Tambahkan meta tag SEO (opsional)
   - jekyll-feed
+
 # Exclude file yang tidak perlu untuk mempercepat build
 exclude:
   - README.md
