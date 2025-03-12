@@ -91,6 +91,10 @@
         margin-top: 20px;
     }
     </style>
+
+    <!-- Google Subscribe with Google (SwG) Basic -->
+    <script async type="application/javascript"
+        src="https://news.google.com/swg/js/v1/swg-basic.js"></script>
 </head>
 <body>
     <header>
@@ -124,7 +128,6 @@
                 let container = document.getElementById("news-container");
                 container.innerHTML = "";
 
-                // Jika JSON kosong, tampilkan pesan
                 if (data.length === 0) {
                     container.innerHTML = "<p style='color:red;'>⚠️ Tidak ada berita untuk ditampilkan.</p>";
                     return;
@@ -145,6 +148,18 @@
                 document.getElementById("news-container").innerHTML = "<p style='color:red;'>⚠️ Gagal memuat berita!</p>";
             }
         });
+    </script>
+
+    <!-- Inisialisasi SwG Basic -->
+    <script>
+      (self.SWG_BASIC = self.SWG_BASIC || []).push( basicSubscriptions => {
+        basicSubscriptions.init({
+          type: "NewsArticle",
+          isPartOfType: ["Product"],
+          isPartOfProductId: "CAownPG5DA:openaccess",
+          clientOptions: { theme: "light", lang: "id" },
+        });
+      });
     </script>
 </body>
 </html>
