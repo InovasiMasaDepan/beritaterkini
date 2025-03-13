@@ -13,22 +13,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ambil semua history buat mencegah konflik
 
       - name: Generate RSS Feed
         run: |
-          set -eo pipefail  # Hentikan script jika terjadi error
+          set -eo pipefail
 
-          # Cek apakah ada file HTML berita di root
           if ls *.html 1> /dev/null 2>&1; then
             echo "📢 Berita baru ditemukan! Feed lama tetap dipertahankan."
           else
             if [[ -f feed.xml ]]; then
               echo "🗑️ Tidak ada berita baru, menghapus feed lama..."
-              rm -f feed.xml  # Hapus feed.xml hanya jika ada
+              rm -f feed.xml
             fi
           fi
 
-          # Pastikan articles.json ada dan valid
           if [[ ! -f articles.json ]]; then
             echo "⚠️ File articles.json tidak ditemukan! RSS feed tidak diperbarui."
             exit 1
@@ -39,7 +39,6 @@ jobs:
             exit 1
           fi
 
-          # Buat ulang feed.xml
           echo '<?xml version="1.0" encoding="UTF-8"?>' > feed.xml
           echo '<rss version="2.0"><channel>' >> feed.xml
           echo '<title>Inovasi Masa Depan</title>' >> feed.xml
@@ -47,17 +46,15 @@ jobs:
           echo '<description>Berita, Informasi, dan Update Terkini</description>' >> feed.xml
           echo '<language>id</language>' >> feed.xml
 
-          # Tambahkan berita dari articles.json ke RSS
           jq -c '.[]' articles.json | while read -r i; do
             title=$(echo "$i" | jq -r '.title')
-            link=$(echo "$i" | jq -r '.link')  # Ambil link relatif saja
+            link=$(echo "$i" | jq -r '.link')
             desc=$(echo "$i" | jq -r '.description')
             pubDate=$(date -R)
 
-            # Gabungkan link dengan base URL
             echo '<item>' >> feed.xml
             echo "  <title><![CDATA[$title]]></title>" >> feed.xml
-            echo "  <link>https://inovasimasadepan.github.io$link</link>" >> feed.xml  # Gabungkan dengan URL base
+            echo "  <link>https://inovasimasadepan.github.io$link</link>" >> feed.xml
             echo "  <description><![CDATA[$desc]]></description>" >> feed.xml
             echo "  <pubDate>$pubDate</pubDate>" >> feed.xml
             echo '</item>' >> feed.xml
@@ -67,14 +64,14 @@ jobs:
 
       - name: Commit and push changes
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Pakai token bawaan GitHub Actions
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "github-actions"
 
           git fetch origin main
           git checkout main
-          git pull origin main --rebase || { echo "⚠️ Gagal pull perubahan dari remote"; exit 1; }
+          git pull origin main --rebase || git reset --hard origin/main  # Fix konflik dengan remote
 
           git add .
           if git diff --cached --quiet; then
@@ -83,4 +80,4 @@ jobs:
           fi
 
           git commit -m "🔄 Update RSS feed"
-          git push origin main
+          git push origin main || { echo "⚠️ Push gagal, coba lagi dengan --force"; git push --force origin main; }
