@@ -22,8 +22,10 @@ jobs:
           if ls *.html 1> /dev/null 2>&1; then
             echo "📢 Berita baru ditemukan! Feed lama tetap dipertahankan."
           else
-            echo "🗑️ Tidak ada berita baru, menghapus feed lama..."
-            rm -f feed.xml  # Hapus feed.xml lama jika tidak ada berita
+            if [[ -f feed.xml ]]; then
+              echo "🗑️ Tidak ada berita baru, menghapus feed lama..."
+              rm -f feed.xml  # Hapus feed.xml hanya jika ada
+            fi
           fi
 
           # Pastikan articles.json ada dan valid
@@ -32,7 +34,7 @@ jobs:
             exit 1
           fi
 
-          if ! jq empty articles.json > /dev/null 2>&1; then
+          if ! jq -e . articles.json > /dev/null 2>&1; then
             echo "❌ File articles.json tidak valid JSON!"
             exit 1
           fi
@@ -75,4 +77,8 @@ jobs:
           fi
 
           git commit -m "🔄 Update RSS feed"
+
+          # Tarik perubahan terbaru sebelum push untuk menghindari error
+          git pull origin main --rebase
+
           git push origin main
