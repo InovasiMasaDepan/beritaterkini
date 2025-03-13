@@ -65,7 +65,7 @@ jobs:
 
           echo '</channel></rss>' >> feed.xml
 
-               - name: Commit and push changes
+      - name: Commit and push changes
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: |
@@ -74,7 +74,7 @@ jobs:
 
           git fetch origin main
           git checkout main
-          git pull origin main --rebase  # Ambil perubahan terbaru sebelum push
+          git pull origin main --rebase  # Mengambil perubahan terbaru dan menggabungkan ke branch lokal
 
           git add .
           if git diff --cached --quiet; then
@@ -83,5 +83,4 @@ jobs:
           fi
 
           git commit -m "🔄 Update RSS feed"
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/invoasimasadepan/beritaterkini.git main
-
+          git push origin main
