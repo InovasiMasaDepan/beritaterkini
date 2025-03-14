@@ -20,15 +20,6 @@ jobs:
         run: |
           set -eo pipefail
 
-          if ls *.html 1> /dev/null 2>&1; then
-            echo "📢 Berita baru ditemukan! Feed lama tetap dipertahankan."
-          else
-            if [[ -f feed.xml ]]; then
-              echo "🗑️ Tidak ada berita baru, menghapus feed lama..."
-              rm -f feed.xml
-            fi
-          fi
-
           if [[ ! -f articles.json ]]; then
             echo "⚠️ File articles.json tidak ditemukan! RSS feed tidak diperbarui."
             exit 1
@@ -50,11 +41,12 @@ jobs:
             title=$(echo "$i" | jq -r '.title')
             link=$(echo "$i" | jq -r '.link')
             desc=$(echo "$i" | jq -r '.description')
-            pubDate=$(date -R)
+            pubDate=$(echo "$i" | jq -r '.pubDate // empty')
+            [[ -z "$pubDate" ]] && pubDate=$(date -R)
 
             echo '<item>' >> feed.xml
             echo "  <title><![CDATA[$title]]></title>" >> feed.xml
-            echo "  <link>https://inovasimasadepan.github.io$link</link>" >> feed.xml
+            echo "  <link>$link</link>" >> feed.xml
             echo "  <description><![CDATA[$desc]]></description>" >> feed.xml
             echo "  <pubDate>$pubDate</pubDate>" >> feed.xml
             echo '</item>' >> feed.xml
@@ -63,21 +55,21 @@ jobs:
           echo '</channel></rss>' >> feed.xml
 
       - name: Commit and push changes
-  env:
-    GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-  run: |
-    git config --global user.email "actions@github.com"
-    git config --global user.name "github-actions"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions"
 
-    git fetch origin main
-    git checkout main
-    git pull --no-edit --rebase origin main || git pull --no-edit origin main || git reset --hard origin/main
+          git fetch origin main
+          git checkout main
+          git pull --no-edit --rebase origin main || git pull --no-edit origin main || git reset --hard origin/main
 
-    git add .
-    if git diff --cached --quiet; then
-      echo "✅ Tidak ada perubahan yang perlu di-push."
-      exit 0
-    fi
+          git add feed.xml
+          if git diff --cached --quiet; then
+            echo "✅ Tidak ada perubahan yang perlu di-push."
+            exit 0
+          fi
 
-    git commit -m "🔄 Update RSS feed"
-    git push origin main
+          git commit -m "🔄 Update RSS feed"
+          git push origin main
