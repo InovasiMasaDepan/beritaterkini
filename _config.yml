@@ -20,6 +20,9 @@ plugins:
   - jekyll-seo-tag    # Tambahkan meta tag SEO
   - jekyll-feed       # RSS feed otomatis
   - jekyll-paginate   # Pagination untuk daftar artikel
+  - jekyll-minifier # Meningkatkan skor Google PageSpeed
+  - jekyll-amp # Halaman lebih cepat di-load di mobile
+  - jekyll-compress-images # Mengompres gambar tanpa kehilangan kualitas
 
 # Aktifkan pagination (opsional, jika ada banyak artikel)
 paginate: 10
