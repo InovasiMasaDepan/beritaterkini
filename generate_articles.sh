@@ -43,12 +43,6 @@ while IFS= read -r file; do
         description="Baca artikel terbaru: $title"
     fi
 
-    # Jika gambar tidak ditemukan, buat link dari Cloudflare R2
-    if [[ -z "$image" ]]; then
-        base_name=$(basename "$file" .html)
-        image="https://cdn.inovasimasadepan.com/images/${folder}/${base_name}.jpg"
-    fi
-
     # Buat link berdasarkan folder
     if [[ "$folder" == "." ]]; then
         link="https://inovasimasadepan.github.io/$filename"
