@@ -42,7 +42,7 @@ jobs:
           echo '<link>https://inovasimasadepan.github.io/</link>' >> feed.xml
           echo '<description>Berita, Informasi, dan Update Terkini</description>' >> feed.xml
           echo '<language>id</language>' >> feed.xml
-          echo '<atom:link href="https://inovasimasadepan.github.io/feed.xml" rel="self" type="application/rss+xml"/>' >> feed.xml
+          echo '<atom:link href="https://inovasimasadepan.github.io/beritaterkini/feed.xml" rel="self" type="application/rss+xml"/>' >> feed.xml
 
           jq -c '.[]' articles.json | while read -r i; do
             title=$(echo "$i" | jq -r '.title')
