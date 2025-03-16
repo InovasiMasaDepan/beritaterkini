@@ -25,6 +25,11 @@ jobs:
             exit 1
           fi
 
+          if [[ ! -s articles.json ]]; then
+            echo "⚠️ File articles.json kosong! RSS feed tidak diperbarui."
+            exit 1
+          fi
+
           if ! jq -e . articles.json > /dev/null 2>&1; then
             echo "❌ File articles.json tidak valid JSON!"
             exit 1
@@ -42,7 +47,13 @@ jobs:
             link=$(echo "$i" | jq -r '.link')
             desc=$(echo "$i" | jq -r '.description')
             pubDate=$(echo "$i" | jq -r '.pubDate // empty')
-            [[ -z "$pubDate" ]] && pubDate=$(date -R)
+
+            # Format tanggal jika kosong
+            if [[ -z "$pubDate" ]]; then
+              pubDate=$(date -R)
+            else
+              pubDate=$(date -R -d "$pubDate" 2>/dev/null || date -R)
+            fi
 
             echo '<item>' >> feed.xml
             echo "  <title><![CDATA[$title]]></title>" >> feed.xml
@@ -53,6 +64,9 @@ jobs:
           done
 
           echo '</channel></rss>' >> feed.xml
+
+          # Hapus elemen <style> yang nggak valid (kalau ada)
+          sed -i '/<style/,/<\/style>/d' feed.xml
 
       - name: Commit and push changes
         env:
