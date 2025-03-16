@@ -1,4 +1,4 @@
-name: Generate RSS Feed 
+name: Generate RSS Feed
 
 on:
   push:
@@ -36,12 +36,13 @@ jobs:
           fi
 
           echo '<?xml version="1.0" encoding="UTF-8"?>' > feed.xml
-          echo '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">' >> feed.xml
+          echo '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">' >> feed.xml
           echo '<channel>' >> feed.xml
           echo '<title>Inovasi Masa Depan</title>' >> feed.xml
           echo '<link>https://inovasimasadepan.github.io/</link>' >> feed.xml
           echo '<description>Berita, Informasi, dan Update Terkini</description>' >> feed.xml
           echo '<language>id</language>' >> feed.xml
+          echo '<atom:link href="https://inovasimasadepan.github.io/feed.xml" rel="self" type="application/rss+xml"/>' >> feed.xml
 
           jq -c '.[]' articles.json | while read -r i; do
             title=$(echo "$i" | jq -r '.title')
