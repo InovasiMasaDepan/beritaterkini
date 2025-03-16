@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 
 # Output file JSON
 OUTPUT_FILE="articles.json"
@@ -30,6 +30,9 @@ while IFS= read -r file; do
     # Ambil deskripsi dari meta tag <meta name="description">
     description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$file" | head -1 | sed 's/"/\\"/g')
 
+    # Ambil gambar dari meta tag <meta property="og:image">
+    image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$file" | head -1)
+
     # Jika title tidak ditemukan, gunakan nama file tanpa .html
     if [[ -z "$title" ]]; then
         title=$(echo "$filename" | sed 's/-/ /g' | sed 's/.html//g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
@@ -40,10 +43,10 @@ while IFS= read -r file; do
         description="Baca artikel terbaru: $title"
     fi
 
-    # Cek jika title adalah "Index", jangan masukkan ke JSON
-    if [[ "$title" == "Index" ]]; then
-        echo "❌ Skip index.html dari daftar artikel."
-        continue
+    # Jika gambar tidak ditemukan, buat link dari Cloudflare R2
+    if [[ -z "$image" ]]; then
+        base_name=$(basename "$file" .html)
+        image="https://cdn.inovasimasadepan.com/images/${folder}/${base_name}.jpg"
     fi
 
     # Buat link berdasarkan folder
@@ -65,7 +68,8 @@ while IFS= read -r file; do
     {
         "title": "$title",
         "description": "$description",
-        "link": "$link"
+        "link": "$link",
+        "image": "$image"
     }
 EOF
 done <<< "$ARTICLE_FILES"
