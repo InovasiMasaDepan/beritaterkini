@@ -3,10 +3,14 @@
 # Output file JSON
 OUTPUT_FILE="articles.json"
 
-# Pastikan ada file HTML di root (kecuali index.html)
-ARTICLE_COUNT=$(ls -1 ./*.html 2>/dev/null | grep -v "/index.html$" | wc -l)
+# Cari semua file HTML (kecuali index.html) di root & subfolder
+ARTICLE_FILES=$(find . -type f -name "*.html" ! -name "index.html")
+
+# Hitung jumlah artikel
+ARTICLE_COUNT=$(echo "$ARTICLE_FILES" | wc -l)
+
 if [ "$ARTICLE_COUNT" -eq 0 ]; then
-    echo "⚠️ Tidak ada artikel ditemukan di root!"
+    echo "⚠️ Tidak ada artikel ditemukan!"
     echo "[]" > "$OUTPUT_FILE"  # Buat file JSON kosong
     exit 0
 fi
@@ -15,17 +19,16 @@ fi
 echo "[" > "$OUTPUT_FILE"
 first=true
 
-# Loop semua file HTML di root (kecuali index.html)
-for file in ./*.html; do
-    [[ "$file" == "./index.html" ]] && continue  # Pastikan index.html tidak diproses
-
+# Loop semua file HTML
+while IFS= read -r file; do
     filename=$(basename -- "$file")
-    
+    folder=$(dirname -- "$file" | sed 's|^\./||')  # Hapus "./" di awal
+
     # Ambil title dari tag <title>
-    title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file" | head -1)
+    title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file" | head -1 | sed 's/"/\\"/g')
 
     # Ambil deskripsi dari meta tag <meta name="description">
-    description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$file" | head -1)
+    description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$file" | head -1 | sed 's/"/\\"/g')
 
     # Jika title tidak ditemukan, gunakan nama file tanpa .html
     if [[ -z "$title" ]]; then
@@ -43,7 +46,12 @@ for file in ./*.html; do
         continue
     fi
 
-    link="https://inovasimasadepan.github.io/beritaterkini/$filename"
+    # Buat link berdasarkan folder
+    if [[ "$folder" == "." ]]; then
+        link="https://inovasimasadepan.github.io/$filename"
+    else
+        link="https://inovasimasadepan.github.io/$folder/$filename"
+    fi
 
     echo "✅ Processing: $filename ($title)"  
 
@@ -60,7 +68,7 @@ for file in ./*.html; do
         "link": "$link"
     }
 EOF
-done
+done <<< "$ARTICLE_FILES"
 
 echo "]" >> "$OUTPUT_FILE"
 
