@@ -60,8 +60,8 @@ while IFS= read -r filepath; do
     fi
 
     # Escape karakter yang bisa merusak JSON
-    title=$(echo "$title" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\t/ /g' | sed 's/\r//g' | sed 's/\n/ /g')
-    description=$(echo "$description" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\t/ /g' | sed 's/\r//g' | sed 's/\n/ /g')
+    title=$(echo "$title" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+    description=$(echo "$description" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
 
     # Link yang sesuai dengan struktur folder beritaterkini
     link="https://inovasimasadepan.github.io/beritaterkini/$relative_path"
@@ -82,12 +82,14 @@ while IFS= read -r filepath; do
     fi
 
     # Tambahkan ke JSON
-    echo "  {" >> "$OUTPUT_FILE"
-    echo "    \"title\": \"$title\"," >> "$OUTPUT_FILE"
-    echo "    \"description\": \"$description\"," >> "$OUTPUT_FILE"
-    echo "    \"link\": \"$link\"," >> "$OUTPUT_FILE"
-    echo "    \"image\": \"$image\"" >> "$OUTPUT_FILE"
-    echo "  }$comma" >> "$OUTPUT_FILE"
+    cat <<EOF >> "$OUTPUT_FILE"
+  {
+    "title": "$title",
+    "description": "$description",
+    "link": "$link",
+    "image": "$image"
+  }$comma
+EOF
 
 done <<< "$ARTICLE_FILES"
 
@@ -95,8 +97,7 @@ echo "]" >> "$OUTPUT_FILE"
 
 # Validasi JSON jika ada `jq`
 if command -v jq &> /dev/null; then
-    jq . "$OUTPUT_FILE" > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
+    if ! jq . "$OUTPUT_FILE" > /dev/null 2>&1; then
         echo "❌ JSON tidak valid! Periksa kembali articles.json."
         exit 1
     else
