@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <title>Inovasi Masa Depan - Berita Teknologi & Bisnis Terkini</title>
-    
-    <meta name="description" content="Dapatkan berita dan informasi terbaru tentang game kasino, RTP live, teknologi, dan bisnis digital. Temukan tren terbaru yang wajib Anda tahu!">
+
+    <meta name="description" content="Berita, Informasi, dan Panduan Terkini tentang Game Kasino dan Hiburan Digital">
     <meta name="robots" content="max-image-preview:large, index, follow">
     <meta name="author" content="InovasiMasaDepan">
     <meta name="keywords" content="berita teknologi, Panduan Kasino, rtp live, startup, Game Kasino, berita viral">
@@ -28,10 +28,6 @@
         text-align: center;
         padding: 20px;
         font-size: 1.5rem;
-    }
-    header h2 {
-        font-size: 1.2rem;
-        font-weight: normal;
     }
     nav {
         background: #005bb5;
@@ -72,11 +68,6 @@
     .news-item:hover {
         transform: scale(1.03);
     }
-    .news-item img {
-        width: 100%;
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
     .news-item a {
         display: inline-block;
         background: #0073e6;
@@ -100,18 +91,22 @@
         margin-top: 20px;
     }
     </style>
+
+    <!-- Google Subscribe with Google (SwG) Basic -->
+    <script async type="application/javascript"
+        src="https://news.google.com/swg/js/v1/swg-basic.js"></script>
 </head>
 <body>
     <header>
         <h1>Inovasi Masa Depan</h1>
-        <h2>Berita, Informasi, dan Update Terkini</h2>
+        <p>Berita, Informasi, dan Update Terkini</p>
     </header>
     <nav>
         <ul>
-            <li><a href="#">PragmaticPlay</a></li>
-            <li><a href="#">PgSoft</a></li>
-            <li><a href="#">IdnSlot</a></li>
-            <li><a href="#">Poker</a></li>
+            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">PragmaticPlay</a></li>
+            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">PgSoft</a></li>
+            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">IdnSlot</a></li>
+            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">Poker</a></li>
         </ul>
     </nav>
 
@@ -141,7 +136,6 @@
                 data.forEach(article => {
                     let articleHTML = `
                         <div class="news-item">
-                            <img src="${article.image}" alt="${article.title}" loading="lazy">
                             <h3>${article.title}</h3>
                             <p>${article.description}</p>
                             <a href="${article.link}" target="_blank">Baca selengkapnya</a>
@@ -154,6 +148,18 @@
                 document.getElementById("news-container").innerHTML = "<p style='color:red;'>⚠️ Gagal memuat berita!</p>";
             }
         });
+    </script>
+
+    <!-- Inisialisasi SwG Basic -->
+    <script>
+      (self.SWG_BASIC = self.SWG_BASIC || []).push( basicSubscriptions => {
+        basicSubscriptions.init({
+          type: "NewsArticle",
+          isPartOfType: ["Product"],
+          isPartOfProductId: "CAownPG5DA:openaccess",
+          clientOptions: { theme: "light", lang: "id" },
+        });
+      });
     </script>
 </body>
 </html>
