@@ -3,8 +3,8 @@
 # Output file JSON
 OUTPUT_FILE="articles.json"
 
-# Cari semua file HTML (kecuali index.html) di dalam beritaterkini/
-ARTICLE_FILES=$(find ./beritaterkini -type f -name "*.html")
+# Cari semua file HTML (kecuali index.html) di mana saja dalam repo
+ARTICLE_FILES=$(find . -type f -name "*.html" ! -name "index.html")
 
 # Hitung jumlah artikel
 ARTICLE_COUNT=$(echo "$ARTICLE_FILES" | wc -l)
@@ -22,6 +22,8 @@ first=true
 # Loop semua file HTML
 while IFS= read -r file; do
     filename=$(basename -- "$file")
+    filepath=$(dirname -- "$file")
+    relative_path=${filepath#./}  # Hapus './' di awal path
 
     # Ambil title dari tag <title>
     title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file" | head -1 | sed 's/"/\\"/g')
@@ -47,8 +49,12 @@ while IFS= read -r file; do
         image="https://inovasimasadepan.github.io/default-thumbnail.jpg"
     fi
 
-    # Buat link berdasarkan struktur /beritaterkini/
-    link="https://inovasimasadepan.github.io/beritaterkini/$filename"
+    # Buat link yang benar sesuai lokasi file
+    if [[ "$relative_path" == "" || "$relative_path" == "." ]]; then
+        link="https://inovasimasadepan.github.io/$filename"
+    else
+        link="https://inovasimasadepan.github.io/$relative_path/$filename"
+    fi
 
     echo "✅ Processing: $filename ($title)"  
 
@@ -66,6 +72,7 @@ while IFS= read -r file; do
         "image": "$image"
     }
 EOF
+
 done <<< "$ARTICLE_FILES"
 
 echo "]" >> "$OUTPUT_FILE"
