@@ -6,12 +6,15 @@ OUTPUT_FILE="beritaterkini/articles.json"
 # Cari semua file HTML di dalam folder "beritaterkini" (kecuali index.html)
 ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html")
 
-# Hitung jumlah artikel
-ARTICLE_COUNT=$(echo "$ARTICLE_FILES" | wc -l)
+# Debugging: Tampilkan lokasi dan file yang ditemukan
+echo "📂 Current directory: $(pwd)"
+echo "🔍 Files ditemukan:"
+echo "$ARTICLE_FILES"
 
-if [ "$ARTICLE_COUNT" -eq 0 ]; then
+# Jika tidak ada artikel, buat file JSON kosong
+if [[ -z "$ARTICLE_FILES" ]]; then
     echo "⚠️ Tidak ada artikel ditemukan!"
-    echo "[]" > "$OUTPUT_FILE"  # Buat file JSON kosong
+    echo "[]" > "$OUTPUT_FILE"
     exit 0
 fi
 
@@ -21,8 +24,8 @@ counter=0
 
 # Loop semua file HTML
 while IFS= read -r filepath; do
-    filename=$(basename "$filepath")  # Ambil nama file saja
-    relative_path=${filepath#beritaterkini/}  # Hilangkan prefix folder
+    filename=$(basename "$filepath")
+    relative_path=${filepath#beritaterkini/}
 
     # Ambil title dari tag <title>
     title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$filepath" | head -1 | sed 's/"/\\"/g')
@@ -43,15 +46,24 @@ while IFS= read -r filepath; do
         description="Baca artikel terbaru: $title"
     fi
 
-    # Jika gambar tidak ditemukan, pakai default (opsional)
+    # Jika gambar tidak ditemukan, pakai default
     if [[ -z "$image" ]]; then
         image="https://inovasimasadepan.github.io/default-thumbnail.jpg"
     fi
 
-    # **Perbaikan utama: Link sekarang termasuk "beritaterkini/"**
+    # Perbaikan: Pastikan JSON string valid
+    title=$(echo "$title" | jq -Rsa .)
+    description=$(echo "$description" | jq -Rsa .)
+
+    # Buat link
     link="https://inovasimasadepan.github.io/beritaterkini/$relative_path"
 
-    echo "✅ Processing: $relative_path ($title)"  
+    # Debugging: Tampilkan data yang diproses
+    echo "📝 Artikel: $relative_path"
+    echo "   ➜ Title: $title"
+    echo "   ➜ Description: $description"
+    echo "   ➜ Image: $image"
+    echo "   ➜ Link: $link"
 
     # Tambahkan koma kecuali di elemen terakhir
     counter=$((counter+1))
@@ -63,8 +75,8 @@ while IFS= read -r filepath; do
 
     cat <<EOF >> "$OUTPUT_FILE"
     {
-        "title": "$title",
-        "description": "$description",
+        "title": $title,
+        "description": $description,
         "link": "$link",
         "image": "$image"
     }$comma
@@ -86,3 +98,8 @@ if command -v jq &> /dev/null; then
 else
     echo "⚠️ jq tidak terinstall, tidak bisa validasi JSON otomatis."
 fi
+
+# Commit dan push jika ada perubahan
+git add "$OUTPUT_FILE"
+git commit -m "Update articles.json otomatis"
+git push origin main
