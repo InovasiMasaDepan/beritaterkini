@@ -4,23 +4,19 @@
 OUTPUT_FILE="beritaterkini/articles.json"
 
 # Pastikan folder "beritaterkini" ada
-if [[ ! -d "beritaterkini" ]]; then
-    echo "⚠️ Folder 'beritaterkini' tidak ditemukan!"
-    echo "[]" > "$OUTPUT_FILE"
-    exit 0
-fi
+mkdir -p beritaterkini
 
 # Cari semua file HTML di dalam folder "beritaterkini" (kecuali index.html)
-ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html" | sort)
+ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html" 2>/dev/null | sort)
 
-# Debugging: Tampilkan lokasi dan file yang ditemukan
+# Debugging: Pastikan ada file yang ditemukan
 echo "📂 Current directory: $(pwd)"
 echo "🔍 Files ditemukan:"
 echo "$ARTICLE_FILES"
 
 # Jika tidak ada artikel, buat file JSON kosong
 if [[ -z "$ARTICLE_FILES" ]]; then
-    echo "⚠️ Tidak ada artikel ditemukan!"
+    echo "⚠️ Tidak ada artikel ditemukan! Membuat JSON kosong."
     echo "[]" > "$OUTPUT_FILE"
     exit 0
 fi
@@ -32,6 +28,10 @@ counter=0
 total_articles=$(echo "$ARTICLE_FILES" | wc -l)
 
 while IFS= read -r filepath; do
+    if [[ -z "$filepath" ]]; then
+        continue
+    fi
+
     filename=$(basename "$filepath")
     relative_path=${filepath#beritaterkini/}
 
@@ -94,6 +94,12 @@ EOF
 done <<< "$ARTICLE_FILES"
 
 echo "]" >> "$OUTPUT_FILE"
+
+# Debugging: Pastikan file JSON benar-benar dibuat
+if [[ ! -f "$OUTPUT_FILE" ]]; then
+    echo "❌ Gagal membuat articles.json!"
+    exit 1
+fi
 
 # Validasi JSON jika ada `jq`
 if command -v jq &> /dev/null; then
