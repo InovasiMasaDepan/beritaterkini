@@ -41,19 +41,31 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}  # Pakai GH_PAT, bukan default token
         run: |
           set -e
-         git config --global user.name "github-actions[bot]"
-git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Konfigurasi Git
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
+          # Atur remote repository
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/InovasiMasaDepan/beritaterkini.git
 
+          # Pull perubahan terbaru dengan rebase (jika gagal, lanjutkan)
           git pull --rebase origin main || echo "⚠️ Tidak bisa pull, lanjut commit."
+
+          # Periksa apakah file articles.json ada sebelum di-add
+          if [ ! -f articles.json ]; then
+            echo "❌ articles.json tidak ditemukan! Tidak bisa commit."
+            exit 1
+          fi
 
           git add articles.json
 
+          # Jika tidak ada perubahan, tidak usah commit
           if git diff --cached --quiet; then
             echo "✅ Tidak ada perubahan pada articles.json. Tidak perlu commit."
             exit 0
           fi
 
+          # Commit & push perubahan
           git commit -m "🔄 Update articles.json otomatis"
           git push origin main
