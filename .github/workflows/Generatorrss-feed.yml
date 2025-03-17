@@ -44,14 +44,31 @@ jobs:
           echo '<language>id</language>' >> feed.xml
           echo '<atom:link href="https://inovasimasadepan.github.io/beritaterkini/feed.xml" rel="self" type="application/rss+xml"/>' >> feed.xml
 
+          # Buat mapping nama file dengan judul artikel
+          declare -A file_map
+          while IFS= read -r file; do
+            judul=$(grep -oP '(?<=<title>).*?(?=</title>)' "beritaterkini/$file" | head -1)
+            if [[ -n "$judul" ]]; then
+              file_map["$judul"]="$file"
+            fi
+          done < <(ls beritaterkini/*.html | sed 's|beritaterkini/||')
+
           jq -c '.[]' articles.json | while read -r i; do
             title=$(echo "$i" | jq -r '.title')
-            filename=$(echo "$title" | sed 's/[^a-zA-Z0-9!-]/-/g' | tr -s '-')
-            link="https://inovasimasadepan.github.io/beritaterkini/${filename}.html"
             desc=$(echo "$i" | jq -r '.description')
             pubDate=$(echo "$i" | jq -r '.pubDate // empty')
             category=$(echo "$i" | jq -r '.category // "Umum"')
             banner=$(echo "$i" | jq -r '.banner // empty')
+
+            # Gunakan mapping file yang cocok dengan judul
+            filename="${file_map["$title"]}"
+
+            if [[ -z "$filename" ]]; then
+              echo "❌ Tidak ditemukan file untuk artikel: $title"
+              continue
+            fi
+
+            link="https://inovasimasadepan.github.io/beritaterkini/$filename"
 
             # Format tanggal
             if [[ -z "$pubDate" ]]; then
@@ -95,5 +112,5 @@ jobs:
             exit 0
           fi
 
-          git commit -m "🔄 Update RSS feed dengan format link sesuai struktur file"
+          git commit -m "🔄 Update RSS feed dengan nama file yang benar"
           git push origin main
