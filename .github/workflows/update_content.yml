@@ -14,11 +14,11 @@ jobs:
       - name: Generate articles.json
         run: |
           mkdir -p beritaterkini
-
           ARTICLES_FILE="beritaterkini/articles.json"
           TEMP_FILE="beritaterkini/temp_articles.json"
           echo "[" > $TEMP_FILE
 
+          FILE_COUNT=0
           for file in $(find beritaterkini -type f -name "*.html"); do
             if [[ "$file" != "beritaterkini/index.html" ]]; then
               title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
@@ -31,12 +31,20 @@ jobs:
               [[ -z "$image" ]] && image="https://inovasimasadepan.github.io/beritaterkini/default-thumbnail.jpg"
 
               echo "  {\"title\": \"$title\", \"description\": \"$description\", \"image\": \"$image\", \"link\": \"$link\"}," >> $TEMP_FILE
+              ((FILE_COUNT++))
             fi
           done
 
-          sed -i '$ s/,$//' $TEMP_FILE
+          if [[ $FILE_COUNT -gt 0 ]]; then
+            sed -i '$ s/,$//' $TEMP_FILE
+          fi
+          
           echo "]" >> $TEMP_FILE
           mv $TEMP_FILE $ARTICLES_FILE
+
+      - name: Validate JSON
+        run: |
+          jq . beritaterkini/articles.json > /dev/null || (echo "File articles.json tidak valid JSON!" && exit 1)
 
       - name: Generate sitemap.xml
         run: |
