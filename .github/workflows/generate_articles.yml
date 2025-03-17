@@ -41,13 +41,13 @@ jobs:
 
       - name: Commit & Push Perubahan
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}  # Menggunakan token yang benar dari repository secrets
         run: |
           set -e  # Stop jika ada error
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
-          # Pastikan token digunakan dengan benar
+          # Gunakan token yang benar untuk autentikasi
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/InovasiMasaDepan/beritaterkini.git
 
           # Tarik perubahan terbaru untuk menghindari konflik
