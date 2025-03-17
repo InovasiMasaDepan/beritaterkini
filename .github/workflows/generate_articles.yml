@@ -15,12 +15,24 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Pastikan seluruh riwayat git tersedia
 
       - name: Jalankan generate_articles.sh
         run: |
-          set -e  # Stop script jika ada error
+          set -e  # Stop jika ada error
           chmod +x generate_articles.sh
           ./generate_articles.sh || { echo "❌ Script gagal!"; exit 1; }
+
+      - name: Debug - Periksa isi articles.json
+        run: |
+          echo "📂 Isi articles.json setelah generate:"
+          cat beritaterkini/articles.json
+          echo "🔍 Cek apakah kosong..."
+          if [[ ! -s beritaterkini/articles.json ]]; then
+            echo "❌ articles.json kosong! Pastikan script berhasil."
+            exit 1
+          fi
 
       - name: Periksa perubahan pada articles.json
         run: |
@@ -34,11 +46,11 @@ jobs:
           set -e  # Stop jika ada error
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          
+
           # Pastikan token digunakan dengan benar
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/InovasiMasaDepan/beritaterkini.git
-          
-          # Tarik perubahan terbaru untuk mencegah konflik
+
+          # Tarik perubahan terbaru untuk menghindari konflik
           git pull --rebase origin main || echo "⚠️ Tidak bisa pull, lanjut commit."
 
           # Tambahkan perubahan jika ada
