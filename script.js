@@ -1,42 +1,30 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const newsContainer = document.getElementById("news-container");
-    const jsonURL = "articles.json?t=" + new Date().getTime();
+document.addEventListener("DOMContentLoaded", async function () {
+    try {
+        let response = await fetch("https://inovasimasadepan.github.io/beritaterkini/articles.json?t=" + new Date().getTime());
+        if (!response.ok) throw new Error("Gagal memuat articles.json");
 
-    console.log("Fetching articles from:", jsonURL);
+        let data = await response.json();
+        let container = document.getElementById("news-container");
+        container.innerHTML = "";
 
-    fetch(jsonURL)
-        .then(response => {
-            console.log("Response received:", response);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(articles => {
-            console.log("Articles loaded:", articles);
-            newsContainer.innerHTML = ""; 
+        if (data.length === 0) {
+            container.innerHTML = "<p style='color:red;'>⚠️ Tidak ada berita untuk ditampilkan.</p>";
+            return;
+        }
 
-            articles.forEach(article => {
-                const articleElement = document.createElement("article");
-
-                // Pastikan link selalu memiliki "/beritaterkini/"
-                let fixedLink = article.link.startsWith("/beritaterkini/") 
-                    ? article.link 
-                    : "/beritaterkini/" + article.link;
-
-                articleElement.innerHTML = `
-                    <h3><a href="${fixedLink}">${article.title}</a></h3>
-                    <p>${article.description}</p>
-                `;
-                newsContainer.appendChild(articleElement);
-            });
-        })
-        .catch(error => {
-            console.error("Fetch error:", error);
-            if (error.name === "AbortError") {
-                newsContainer.innerHTML = "<p>Request dibatalkan.</p>";
-            } else {
-                newsContainer.innerHTML = "<p>Gagal memuat berita.</p>";
-            }
+        data.forEach(article => {
+            let articleHTML = `
+                <div class="news-item">
+                    <img src="${article.image}" alt="${article.title}" loading="lazy" style="width:100%; border-radius:8px;">
+                    <h3>${article.title}</h3>
+                    <p style="color: #666;">${article.description}</p>
+                    <a href="${article.link}" target="_blank">Baca selengkapnya</a>
+                </div>
+            `;
+            container.innerHTML += articleHTML;
         });
+    } catch (error) {
+        console.error("❌ Error:", error);
+        document.getElementById("news-container").innerHTML = "<p style='color:red;'>⚠️ Gagal memuat berita!</p>";
+    }
 });
