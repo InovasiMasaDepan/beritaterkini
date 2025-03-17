@@ -11,38 +11,38 @@ if [[ ! -d "beritaterkini" ]]; then
 fi
 
 # Cari semua file HTML di dalam folder "beritaterkini" (kecuali index.html)
-ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html")
+ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html" 2>/dev/null)
 
-# Hitung jumlah artikel
-ARTICLE_COUNT=$(echo "$ARTICLE_FILES" | wc -l | tr -d ' ')
+# Debugging: Tampilkan lokasi dan file yang ditemukan
+echo "📂 Current directory: $(pwd)"
+echo "🔍 Files ditemukan:"
+echo "$ARTICLE_FILES"
 
 # Jika tidak ada artikel, buat file JSON kosong
-if [[ -z "$ARTICLE_FILES" || "$ARTICLE_COUNT" -eq 0 ]]; then
+if [[ -z "$ARTICLE_FILES" ]]; then
     echo "⚠️ Tidak ada artikel ditemukan!"
     echo "[]" > "$OUTPUT_FILE"
     exit 0
 fi
 
-# Debugging: Tampilkan file yang ditemukan
-echo "📂 Current directory: $(pwd)"
-echo "🔍 Files ditemukan: $ARTICLE_FILES"
-
-# Mulai JSON array
+# Mulai JSON
 echo "[" > "$OUTPUT_FILE"
 
 counter=0
+total_articles=$(echo "$ARTICLE_FILES" | wc -l)
+
 while IFS= read -r filepath; do
     filename=$(basename "$filepath")
     relative_path=${filepath#beritaterkini/}
 
     # Ambil title dari tag <title>
-    title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$filepath" | head -1 | sed -E 's/"/\\"/g' | tr -d '\n\r')
+    title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$filepath" | head -1 | sed 's/"/\\"/g')
 
     # Ambil deskripsi dari meta tag <meta name="description">
-    description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$filepath" | head -1 | sed -E 's/"/\\"/g' | tr -d '\n\r')
+    description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$filepath" | head -1 | sed 's/"/\\"/g')
 
     # Ambil gambar dari meta tag <meta property="og:image">
-    image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$filepath" | head -1 | tr -d '\n\r')
+    image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$filepath" | head -1)
 
     # Jika title tidak ditemukan, gunakan nama file tanpa .html
     if [[ -z "$title" ]]; then
@@ -59,7 +59,7 @@ while IFS= read -r filepath; do
         image="https://inovasimasadepan.github.io/default-thumbnail.jpg"
     fi
 
-    # Escape karakter JSON yang bisa merusak format
+    # Escape karakter yang bisa merusak JSON
     title=$(echo "$title" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
     description=$(echo "$description" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
 
@@ -75,13 +75,12 @@ while IFS= read -r filepath; do
 
     # Tambahkan koma kecuali di elemen terakhir
     counter=$((counter+1))
-    if [[ $counter -eq $ARTICLE_COUNT ]]; then
-        comma=""
-    else
+    if [[ $counter -lt $total_articles ]]; then
         comma=","
+    else
+        comma=""
     fi
 
-    # Tambahkan data ke JSON
     cat <<EOF >> "$OUTPUT_FILE"
     {
         "title": "$title",
@@ -93,32 +92,26 @@ EOF
 
 done <<< "$ARTICLE_FILES"
 
-# Tutup JSON array
 echo "]" >> "$OUTPUT_FILE"
 
 # Validasi JSON jika ada `jq`
 if command -v jq &> /dev/null; then
-    if ! jq . "$OUTPUT_FILE" > /dev/null 2>&1; then
+    jq . "$OUTPUT_FILE" > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
         echo "❌ JSON tidak valid! Periksa kembali articles.json."
         exit 1
     else
-        echo "✅ articles.json berhasil diperbarui dengan $ARTICLE_COUNT artikel!"
+        echo "✅ articles.json berhasil diperbarui dengan $total_articles artikel!"
     fi
 else
     echo "⚠️ jq tidak terinstall, tidak bisa validasi JSON otomatis."
 fi
 
-# Pastikan file ada sebelum `git add`
-if [[ -f "$OUTPUT_FILE" ]]; then
-    # Commit dan push jika ada perubahan
-    if git diff --quiet "$OUTPUT_FILE"; then
-        echo "✅ Tidak ada perubahan pada articles.json, tidak perlu commit."
-    else
-        git add "$OUTPUT_FILE"
-        git commit -m "🔄 Update articles.json otomatis"
-        git push origin main
-    fi
+# Commit dan push jika ada perubahan
+if git diff --quiet "$OUTPUT_FILE"; then
+    echo "✅ Tidak ada perubahan pada articles.json, tidak perlu commit."
 else
-    echo "❌ Gagal membuat articles.json!"
-    exit 1
+    git add "$OUTPUT_FILE"
+    git commit -m "🔄 Update articles.json otomatis"
+    git push origin main
 fi
