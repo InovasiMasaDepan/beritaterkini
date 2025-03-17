@@ -1,10 +1,10 @@
-#!/bin/bash 
+#!/bin/bash
 
 # Output file JSON
 OUTPUT_FILE="articles.json"
 
-# Cari semua file HTML (kecuali index.html) di root & subfolder
-ARTICLE_FILES=$(find . -type f -name "*.html" ! -name "index.html")
+# Cari semua file HTML (kecuali index.html) di dalam beritaterkini/
+ARTICLE_FILES=$(find ./beritaterkini -type f -name "*.html")
 
 # Hitung jumlah artikel
 ARTICLE_COUNT=$(echo "$ARTICLE_FILES" | wc -l)
@@ -22,7 +22,6 @@ first=true
 # Loop semua file HTML
 while IFS= read -r file; do
     filename=$(basename -- "$file")
-    folder=$(dirname -- "$file" | sed 's|^\./||')  # Hapus "./" di awal
 
     # Ambil title dari tag <title>
     title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file" | head -1 | sed 's/"/\\"/g')
@@ -43,12 +42,13 @@ while IFS= read -r file; do
         description="Baca artikel terbaru: $title"
     fi
 
-    # Buat link berdasarkan folder
-    if [[ "$folder" == "." ]]; then
-        link="https://inovasimasadepan.github.io/beritaterkini/$filename"
-    else
-        link="https://inovasimasadepan.github.io/beritaterkini/$folder/$filename"
+    # Jika gambar tidak ditemukan, pakai default (opsional)
+    if [[ -z "$image" ]]; then
+        image="https://inovasimasadepan.github.io/default-thumbnail.jpg"
     fi
+
+    # Buat link berdasarkan struktur /beritaterkini/
+    link="https://inovasimasadepan.github.io/beritaterkini/$filename"
 
     echo "✅ Processing: $filename ($title)"  
 
