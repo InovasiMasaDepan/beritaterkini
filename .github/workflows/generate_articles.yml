@@ -18,6 +18,7 @@ jobs:
 
       - name: Jalankan generate_articles.sh
         run: |
+          set -e  # Stop script jika ada error
           chmod +x generate_articles.sh
           ./generate_articles.sh || { echo "❌ Script gagal!"; exit 1; }
 
@@ -27,21 +28,27 @@ jobs:
           git diff --stat beritaterkini/articles.json
 
       - name: Commit & Push Perubahan
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
+          set -e  # Stop jika ada error
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/InovasiMasaDepan/beritaterkini.git
+          
+          # Pastikan token digunakan dengan benar
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/InovasiMasaDepan/beritaterkini.git
           
           # Tarik perubahan terbaru untuk mencegah konflik
-          git pull --rebase origin main
-          
+          git pull --rebase origin main || echo "⚠️ Tidak bisa pull, lanjut commit."
+
+          # Tambahkan perubahan jika ada
           git add beritaterkini/articles.json
-          
+
           # Cek apakah ada perubahan sebelum commit
           if git diff --cached --quiet; then
             echo "✅ Tidak ada perubahan pada articles.json. Tidak perlu commit."
             exit 0
           fi
-          
+
           git commit -m "🔄 Update articles.json otomatis"
           git push origin main
