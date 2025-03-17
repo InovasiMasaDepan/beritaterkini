@@ -124,57 +124,61 @@
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", async function () {
-            try {
-                let response = await fetch("https://inovasimasadepan.github.io/beritaterkini/articles.json?t=" + new Date().getTime());
-                if (!response.ok) throw new Error("Gagal memuat articles.json");
+document.addEventListener("DOMContentLoaded", async function () {
+    try {
+        let response = await fetch("https://inovasimasadepan.github.io/beritaterkini/articles.json?t=" + new Date().getTime());
+        console.log("🔍 Response status:", response.status); // Cek status HTTP response
+        
+        if (!response.ok) throw new Error("Gagal memuat articles.json");
+        
+        let data = await response.json();
+        console.log("✅ Data loaded:", data); // Tampilkan data di console
+        
+        let container = document.getElementById("news-container");
+        container.innerHTML = "";
 
-                let data = await response.json();
-                let container = document.getElementById("news-container");
-                container.innerHTML = "";
+        if (!Array.isArray(data) || data.length === 0) {
+            container.innerHTML = "<p style='color:red;'>⚠️ Tidak ada berita untuk ditampilkan.</p>";
+            return;
+        }
 
-                if (!Array.isArray(data) || data.length === 0) {
-                    container.innerHTML = "<p style='color:red;'>⚠️ Tidak ada berita untuk ditampilkan.</p>";
-                    return;
-                }
+        data.forEach(article => {
+            console.log("📌 Artikel:", article); // Debug setiap artikel
+            if (!article.title || !article.description || !article.image || !article.link) return;
 
-                data.forEach(article => {
-                    if (!article.title || !article.description || !article.image || !article.link) return;
-                    
-                    let articleDiv = document.createElement("div");
-                    articleDiv.classList.add("news-item");
-                    
-                    let title = document.createElement("h3");
-                    title.textContent = article.title;
-                    
-                    let description = document.createElement("p");
-                    description.textContent = article.description;
-                    
-                    let image = document.createElement("img");
-                    image.src = article.image;
-                    image.alt = article.title;
-                    image.loading = "lazy";
-                    image.onerror = function () {
-                        this.src = "https://via.placeholder.com/300x200?text=No+Image";
-                    };
-                    
-                    let link = document.createElement("a");
-                    link.href = article.link;
-                    link.textContent = "Baca selengkapnya";
-                    link.target = "_blank";
-                    
-                    articleDiv.appendChild(image);
-                    articleDiv.appendChild(title);
-                    articleDiv.appendChild(description);
-                    articleDiv.appendChild(link);
-                    
-                    container.appendChild(articleDiv);
-                });
-            } catch (error) {
-                console.error("❌ Error:", error);
-                document.getElementById("news-container").innerHTML = "<p style='color:red;'>⚠️ Gagal memuat berita!</p>";
-            }
+            let articleDiv = document.createElement("div");
+            articleDiv.classList.add("news-item");
+
+            let title = document.createElement("h3");
+            title.textContent = article.title;
+
+            let description = document.createElement("p");
+            description.textContent = article.description;
+
+            let image = document.createElement("img");
+            image.src = article.image;
+            image.alt = article.title;
+            image.loading = "lazy";
+            image.onerror = function () {
+                this.src = "https://via.placeholder.com/300x200?text=No+Image";
+            };
+
+            let link = document.createElement("a");
+            link.href = article.link;
+            link.textContent = "Baca selengkapnya";
+            link.target = "_blank";
+
+            articleDiv.appendChild(image);
+            articleDiv.appendChild(title);
+            articleDiv.appendChild(description);
+            articleDiv.appendChild(link);
+
+            container.appendChild(articleDiv);
         });
-    </script>
-</body>
-</html>
+    } catch (error) {
+        console.error("❌ Error:", error);
+        document.getElementById("news-container").innerHTML = "<p style='color:red;'>⚠️ Gagal memuat berita!</p>";
+    }
+});
+</script>
+
