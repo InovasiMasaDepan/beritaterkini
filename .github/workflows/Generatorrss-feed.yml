@@ -46,7 +46,8 @@ jobs:
 
           jq -c '.[]' articles.json | while read -r i; do
             title=$(echo "$i" | jq -r '.title')
-            link=$(echo "$i" | jq -r '.link')  # Gunakan link dari JSON, bukan generate slug
+            filename=$(echo "$title" | sed 's/[^a-zA-Z0-9!-]/-/g' | tr -s '-')
+            link="https://inovasimasadepan.github.io/beritaterkini/${filename}.html"
             desc=$(echo "$i" | jq -r '.description')
             pubDate=$(echo "$i" | jq -r '.pubDate // empty')
             category=$(echo "$i" | jq -r '.category // "Umum"')
@@ -94,5 +95,5 @@ jobs:
             exit 0
           fi
 
-          git commit -m "🔄 Update RSS feed dengan link yang sesuai"
+          git commit -m "🔄 Update RSS feed dengan format link sesuai struktur file"
           git push origin main
