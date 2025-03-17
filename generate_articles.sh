@@ -47,7 +47,7 @@ while IFS= read -r filename; do
         image="https://inovasimasadepan.github.io/default-thumbnail.jpg"
     fi
 
-    # Gunakan format link yang benar
+    # Gunakan format link yang sesuai (dalam "/beritaterkini/")
     link="https://inovasimasadepan.github.io/beritaterkini/$filename"
 
     echo "✅ Processing: $filename ($title)"  
