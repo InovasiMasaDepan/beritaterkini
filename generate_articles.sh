@@ -17,13 +17,11 @@ fi
 
 # Mulai JSON
 echo "[" > "$OUTPUT_FILE"
-first=true
+counter=0
 
 # Loop semua file HTML
 while IFS= read -r file; do
     filename=$(basename -- "$file")
-    filepath=$(dirname -- "$file")
-    relative_path=${filepath#./}  # Hapus './' di awal path
 
     # Ambil title dari tag <title>
     title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file" | head -1 | sed 's/"/\\"/g')
@@ -49,19 +47,17 @@ while IFS= read -r file; do
         image="https://inovasimasadepan.github.io/default-thumbnail.jpg"
     fi
 
-    # Buat link yang benar sesuai lokasi file
-    if [[ "$relative_path" == "" || "$relative_path" == "." ]]; then
-        link="https://inovasimasadepan.github.io/$filename"
-    else
-        link="https://inovasimasadepan.github.io/$relative_path/$filename"
-    fi
+    # Gunakan format link yang benar
+    link="https://inovasimasadepan.github.io/beritaterkini/$filename"
 
     echo "✅ Processing: $filename ($title)"  
 
-    if [ "$first" = true ]; then
-        first=false
+    # Tambahkan koma kecuali di elemen terakhir
+    counter=$((counter+1))
+    if [[ $counter -eq $ARTICLE_COUNT ]]; then
+        comma=""
     else
-        echo "," >> "$OUTPUT_FILE"
+        comma=","
     fi
 
     cat <<EOF >> "$OUTPUT_FILE"
@@ -70,11 +66,22 @@ while IFS= read -r file; do
         "description": "$description",
         "link": "$link",
         "image": "$image"
-    }
+    }$comma
 EOF
 
 done <<< "$ARTICLE_FILES"
 
 echo "]" >> "$OUTPUT_FILE"
 
-echo "✅ articles.json berhasil diperbarui dengan $ARTICLE_COUNT artikel!"
+# Validasi JSON jika ada `jq`
+if command -v jq &> /dev/null; then
+    jq . "$OUTPUT_FILE" > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "❌ JSON tidak valid! Periksa kembali articles.json."
+        exit 1
+    else
+        echo "✅ articles.json berhasil diperbarui dengan $ARTICLE_COUNT artikel!"
+    fi
+else
+    echo "⚠️ jq tidak terinstall, tidak bisa validasi JSON otomatis."
+fi
