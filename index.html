@@ -16,93 +16,90 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-    }
-    header {
-        background: #0073e6;
-        color: white;
-        text-align: center;
-        padding: 20px;
-        font-size: 1.5rem;
-    }
-    header h2 {
-        font-size: 1.2rem;
-        font-weight: normal;
-    }
-    nav {
-        background: #005bb5;
-        text-align: center;
-        padding: 10px;
-    }
-    nav ul {
-        list-style: none;
-    }
-    nav ul li {
-        display: inline;
-        margin: 0 15px;
-    }
-    nav ul li a {
-        color: white;
-        text-decoration: none;
-        font-weight: bold;
-        transition: color 0.3s;
-    }
-    nav ul li a:hover {
-        color: #ffcc00;
-    }
-    .news-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 10px;
-    }
-    .news-item {
-        background: white;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease-in-out;
-    }
-    .news-item:hover {
-        transform: scale(1.03);
-    }
-    .news-item img {
-        width: 100%;
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
-    .news-item a {
-        display: inline-block;
-        background: #0073e6;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 5px;
-        text-decoration: none;
-        font-weight: bold;
-        transition: background 0.3s, transform 0.2s;
-    }
-    .news-item a:hover {
-        background: #005bb5;
-        transform: scale(1.05);
-    }
-    footer {
-        text-align: center;
-        padding: 10px;
-        background: #222;
-        color: white;
-        font-size: 0.9rem;
-        margin-top: 20px;
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background: #0073e6;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.5rem;
+        }
+        header h2 {
+            font-size: 1.2rem;
+            font-weight: normal;
+        }
+        nav {
+            background: #005bb5;
+            text-align: center;
+            padding: 10px;
+        }
+        nav ul {
+            list-style: none;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        nav ul li a:hover {
+            color: #ffcc00;
+        }
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 10px;
+        }
+        .news-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+        .news-item:hover {
+            transform: scale(1.03);
+        }
+        .news-item img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .news-item a {
+            display: inline-block;
+            background: #0073e6;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .news-item a:hover {
+            background: #005bb5;
+            transform: scale(1.05);
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: #222;
+            color: white;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
     </style>
-
-
-
 
 </head>
 <body>
@@ -143,15 +140,35 @@
                 }
 
                 data.forEach(article => {
-                    let articleHTML = `
-                        <div class="news-item">
-                            <img src="${article.image}" alt="${article.title}" loading="lazy">
-                            <h3>${article.title}</h3>
-                            <p>${article.description}</p>
-                            <a href="${article.link}" target="_blank">Baca selengkapnya</a>
-                        </div>
-                    `;
-                    container.innerHTML += articleHTML;
+                    let articleDiv = document.createElement("div");
+                    articleDiv.classList.add("news-item");
+
+                    // Cegah XSS dengan innerText pada teks
+                    let title = document.createElement("h3");
+                    title.innerText = article.title;
+
+                    let description = document.createElement("p");
+                    description.innerText = article.description;
+
+                    let image = document.createElement("img");
+                    image.src = article.image;
+                    image.alt = article.title;
+                    image.onerror = function () {
+                        this.src = "https://via.placeholder.com/300x200?text=No+Image";
+                    };
+
+                    let link = document.createElement("a");
+                    link.href = article.link;
+                    link.innerText = "Baca selengkapnya";
+                    link.target = "_blank";
+
+                    // Tambahkan elemen ke dalam div berita
+                    articleDiv.appendChild(image);
+                    articleDiv.appendChild(title);
+                    articleDiv.appendChild(description);
+                    articleDiv.appendChild(link);
+
+                    container.appendChild(articleDiv);
                 });
             } catch (error) {
                 console.error("❌ Error:", error);
