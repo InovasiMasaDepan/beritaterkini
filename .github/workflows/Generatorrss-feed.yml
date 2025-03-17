@@ -39,7 +39,7 @@ jobs:
           echo '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">' >> feed.xml
           echo '<channel>' >> feed.xml
           echo '<title>Inovasi Masa Depan</title>' >> feed.xml
-          echo '<link>https://inovasimasadepan.github.io/</link>' >> feed.xml
+          echo '<link>https://inovasimasadepan.github.io/beritaterkini/</link>' >> feed.xml
           echo '<description>Berita, Informasi, dan Update Terkini</description>' >> feed.xml
           echo '<language>id</language>' >> feed.xml
           echo '<atom:link href="https://inovasimasadepan.github.io/beritaterkini/feed.xml" rel="self" type="application/rss+xml"/>' >> feed.xml
