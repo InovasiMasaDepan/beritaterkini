@@ -11,6 +11,9 @@ echo "📂 Current directory: $(pwd)"
 echo "🔍 Files ditemukan:"
 echo "$ARTICLE_FILES"
 
+# Hitung jumlah artikel
+ARTICLE_COUNT=$(echo "$ARTICLE_FILES" | wc -l)
+
 # Jika tidak ada artikel, buat file JSON kosong
 if [[ -z "$ARTICLE_FILES" ]]; then
     echo "⚠️ Tidak ada artikel ditemukan!"
@@ -20,9 +23,8 @@ fi
 
 # Mulai JSON
 echo "[" > "$OUTPUT_FILE"
-counter=0
 
-# Loop semua file HTML
+counter=0
 while IFS= read -r filepath; do
     filename=$(basename "$filepath")
     relative_path=${filepath#beritaterkini/}
@@ -51,9 +53,9 @@ while IFS= read -r filepath; do
         image="https://inovasimasadepan.github.io/default-thumbnail.jpg"
     fi
 
-    # Perbaikan: Pastikan JSON string valid
-    title=$(echo "$title" | jq -Rsa .)
-    description=$(echo "$description" | jq -Rsa .)
+    # Perbaikan format JSON agar valid
+    title=$(echo "$title" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+    description=$(echo "$description" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
 
     # Buat link
     link="https://inovasimasadepan.github.io/beritaterkini/$relative_path"
@@ -75,8 +77,8 @@ while IFS= read -r filepath; do
 
     cat <<EOF >> "$OUTPUT_FILE"
     {
-        "title": $title,
-        "description": $description,
+        "title": "$title",
+        "description": "$description",
         "link": "$link",
         "image": "$image"
     }$comma
@@ -100,6 +102,10 @@ else
 fi
 
 # Commit dan push jika ada perubahan
-git add "$OUTPUT_FILE"
-git commit -m "Update articles.json otomatis"
-git push origin main
+if [[ $(git status --porcelain "$OUTPUT_FILE") ]]; then
+    git add "$OUTPUT_FILE"
+    git commit -m "Update articles.json otomatis"
+    git push origin main
+else
+    echo "✅ Tidak ada perubahan pada articles.json, tidak perlu commit."
+fi
