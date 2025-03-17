@@ -16,71 +16,60 @@ jobs:
 
       - name: Update articles.json
         run: |
-          ARTICLES_FILE="articles.json"
-          TEMP_FILE="temp_articles.json"
+          ARTICLES_FILE="beritaterkini/articles.json"
+          TEMP_FILE="beritaterkini/temp_articles.json"
           echo "[" > $TEMP_FILE
           
-          # Loop semua file HTML kecuali index.html
-          for file in *.html; do
-            if [[ "$file" != "index.html" ]]; then
+          for file in beritaterkini/*.html; do
+            if [[ "$file" != "beritaterkini/index.html" ]]; then
               title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
               description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$file")
               image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$file")
-              link="https://inovasimasadepan.github.io/beritaterkini/$file"
+              link="https://inovasimasadepan.github.io/$file"
 
-              # Jika title kosong, kasih default
               if [[ -z "$title" ]]; then
                 title="Judul Tidak Ditemukan"
               fi
-
-              # Jika description kosong, kasih default
               if [[ -z "$description" ]]; then
                 description="Berita terbaru dari Inovasi Masa Depan"
               fi
-
-              # Jika image kosong, kasih default placeholder
               if [[ -z "$image" ]]; then
                 image="https://inovasimasadepan.github.io/beritaterkini/default-thumbnail.jpg"
               fi
 
-              # Tambahkan data ke JSON
               echo "  {\"title\": \"$title\", \"description\": \"$description\", \"image\": \"$image\", \"link\": \"$link\"}," >> $TEMP_FILE
             fi
           done
           
-          # Hapus koma terakhir dan tambahkan penutup JSON
           sed -i '$ s/,$//' $TEMP_FILE
           echo "]" >> $TEMP_FILE
           
-          # Ganti file lama dengan yang baru
           mv $TEMP_FILE $ARTICLES_FILE
 
       - name: Generate sitemap.xml
         run: |
-          echo '<?xml version="1.0" encoding="UTF-8"?>' > sitemap.xml
-          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> sitemap.xml
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > beritaterkini/sitemap.xml
+          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> beritaterkini/sitemap.xml
 
-          for file in *.html; do
-            echo "  <url>" >> sitemap.xml
-            echo "    <loc>https://inovasimasadepan.github.io/beritaterkini/$file</loc>" >> sitemap.xml
-            echo "    <lastmod>$(date -u +"%Y-%m-%dT%H:%M:%SZ")</lastmod>" >> sitemap.xml
-            echo "  </url>" >> sitemap.xml
+          for file in beritaterkini/*.html; do
+            echo "  <url>" >> beritaterkini/sitemap.xml
+            echo "    <loc>https://inovasimasadepan.github.io/$file</loc>" >> beritaterkini/sitemap.xml
+            echo "    <lastmod>$(date -u +"%Y-%m-%dT%H:%M:%SZ")</lastmod>" >> beritaterkini/sitemap.xml
+            echo "  </url>" >> beritaterkini/sitemap.xml
           done
 
-          echo '</urlset>' >> sitemap.xml
+          echo '</urlset>' >> beritaterkini/sitemap.xml
 
-            - name: Commit and push changes
+      - name: Commit and push changes
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${GH_PAT}@github.com/InovasiMasaDepan/beritaterkini.git
+
+          git pull origin main --rebase
           
-          # Reset ke state terbaru di remote untuk menghindari error "unstaged changes"
-          git fetch origin main
-          git reset --hard origin/main
-          
-          git add articles.json sitemap.xml
+          git add beritaterkini/articles.json beritaterkini/sitemap.xml
           git commit -m "Update articles.json & sitemap.xml" || echo "No changes to commit"
           git push origin main
