@@ -6,10 +6,9 @@
     
     <title>Inovasi Masa Depan - Berita Teknologi & Bisnis Terkini</title>
     
-    <meta name="description" content="Dapatkan berita dan informasi terbaru tentang game kasino, RTP live, teknologi, dan bisnis digital. Temukan tren terbaru yang wajib Anda tahu!">
-    <meta name="robots" content="max-image-preview:large, index, follow">
+    <meta name="description" content="Dapatkan berita terbaru tentang teknologi, bisnis digital, dan tren industri! Temukan informasi menarik setiap hari.">
+    <meta name="robots" content="index, follow">
     <meta name="author" content="InovasiMasaDepan">
-    <meta name="keywords" content="berita teknologi, Panduan Kasino, rtp live, startup, Game Kasino, berita viral">
     <link rel="canonical" href="https://inovasimasadepan.github.io/beritaterkini/">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,10 +28,6 @@
             padding: 20px;
             font-size: 1.5rem;
         }
-        header h2 {
-            font-size: 1.2rem;
-            font-weight: normal;
-        }
         nav {
             background: #005bb5;
             text-align: center;
@@ -40,10 +35,12 @@
         }
         nav ul {
             list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
         }
         nav ul li {
-            display: inline;
-            margin: 0 15px;
+            margin: 5px 15px;
         }
         nav ul li a {
             color: white;
@@ -76,6 +73,9 @@
             width: 100%;
             border-radius: 8px;
             margin-bottom: 10px;
+            object-fit: cover;
+            background-color: #ddd;
+            loading: lazy;
         }
         .news-item a {
             display: inline-block;
@@ -100,7 +100,6 @@
             margin-top: 20px;
         }
     </style>
-
 </head>
 <body>
     <header>
@@ -109,10 +108,10 @@
     </header>
     <nav>
         <ul>
-            <li><a href="#">PragmaticPlay</a></li>
-            <li><a href="#">PgSoft</a></li>
-            <li><a href="#">IdnSlot</a></li>
-            <li><a href="#">Poker</a></li>
+            <li><a href="#">Teknologi</a></li>
+            <li><a href="#">Bisnis</a></li>
+            <li><a href="#">Startup</a></li>
+            <li><a href="#">Inovasi</a></li>
         </ul>
     </nav>
 
@@ -134,40 +133,41 @@
                 let container = document.getElementById("news-container");
                 container.innerHTML = "";
 
-                if (data.length === 0) {
+                if (!Array.isArray(data) || data.length === 0) {
                     container.innerHTML = "<p style='color:red;'>⚠️ Tidak ada berita untuk ditampilkan.</p>";
                     return;
                 }
 
                 data.forEach(article => {
+                    if (!article.title || !article.description || !article.image || !article.link) return;
+                    
                     let articleDiv = document.createElement("div");
                     articleDiv.classList.add("news-item");
-
-                    // Cegah XSS dengan innerText pada teks
+                    
                     let title = document.createElement("h3");
-                    title.innerText = article.title;
-
+                    title.textContent = article.title;
+                    
                     let description = document.createElement("p");
-                    description.innerText = article.description;
-
+                    description.textContent = article.description;
+                    
                     let image = document.createElement("img");
                     image.src = article.image;
                     image.alt = article.title;
+                    image.loading = "lazy";
                     image.onerror = function () {
                         this.src = "https://via.placeholder.com/300x200?text=No+Image";
                     };
-
+                    
                     let link = document.createElement("a");
                     link.href = article.link;
-                    link.innerText = "Baca selengkapnya";
+                    link.textContent = "Baca selengkapnya";
                     link.target = "_blank";
-
-                    // Tambahkan elemen ke dalam div berita
+                    
                     articleDiv.appendChild(image);
                     articleDiv.appendChild(title);
                     articleDiv.appendChild(description);
                     articleDiv.appendChild(link);
-
+                    
                     container.appendChild(articleDiv);
                 });
             } catch (error) {
@@ -176,18 +176,5 @@
             }
         });
     </script>
-
-    <!-- Inisialisasi SwG Basic -->
-    <script>
-      (self.SWG_BASIC = self.SWG_BASIC || []).push( basicSubscriptions => {
-        basicSubscriptions.init({
-          type: "NewsArticle",
-          isPartOfType: ["Product"],
-          isPartOfProductId: "CAownPG5DA:openaccess",
-          clientOptions: { theme: "light", lang: "id" },
-        });
-      });
-    </script>
-
 </body>
 </html>
