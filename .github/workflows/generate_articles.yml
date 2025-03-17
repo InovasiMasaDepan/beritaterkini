@@ -3,7 +3,7 @@ name: Update Articles JSON
 on:
   push:
     paths:
-      - "beritaterkini/**/*.html"  # Jalan jika ada perubahan file HTML di dalam beritaterkini/
+      - "**/*.html"  # Jalankan jika ada perubahan file HTML di mana saja
   schedule:
     - cron: '0 * * * *'  # Jalan setiap jam
   workflow_dispatch:  # Bisa dijalankan manual juga
@@ -41,7 +41,7 @@ jobs:
 
       - name: Commit & Push Perubahan
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e  # Stop jika ada error
           git config --global user.name "github-actions"
