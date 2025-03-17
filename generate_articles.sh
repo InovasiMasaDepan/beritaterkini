@@ -11,7 +11,7 @@ if [[ ! -d "beritaterkini" ]]; then
 fi
 
 # Cari semua file HTML di dalam folder "beritaterkini" (kecuali index.html)
-ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html" 2>/dev/null)
+ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html" | sort)
 
 # Debugging: Tampilkan lokasi dan file yang ditemukan
 echo "📂 Current directory: $(pwd)"
@@ -96,16 +96,15 @@ done <<< "$ARTICLE_FILES"
 echo "]" >> "$OUTPUT_FILE"
 
 # Validasi JSON jika ada `jq`
-if ! command -v jq &> /dev/null; then
-    echo "⚠️ jq tidak ditemukan! Install dengan 'sudo apt install jq'"
-    exit 1
-fi
-
-if ! jq . "$OUTPUT_FILE" > /dev/null 2>&1; then
-    echo "❌ JSON tidak valid! Periksa kembali articles.json."
-    exit 1
+if command -v jq &> /dev/null; then
+    if ! jq . "$OUTPUT_FILE" > /dev/null 2>&1; then
+        echo "❌ JSON tidak valid! Periksa kembali articles.json."
+        exit 1
+    else
+        echo "✅ articles.json berhasil diperbarui dengan $total_articles artikel!"
+    fi
 else
-    echo "✅ articles.json berhasil diperbarui dengan $total_articles artikel!"
+    echo "⚠️ jq tidak ditemukan! Lewati validasi JSON."
 fi
 
 # Commit dan push jika ada perubahan
