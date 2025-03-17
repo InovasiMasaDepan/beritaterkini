@@ -96,15 +96,16 @@ done <<< "$ARTICLE_FILES"
 echo "]" >> "$OUTPUT_FILE"
 
 # Validasi JSON jika ada `jq`
-if command -v jq &> /dev/null; then
-    if ! jq . "$OUTPUT_FILE" > /dev/null 2>&1; then
-        echo "❌ JSON tidak valid! Periksa kembali articles.json."
-        exit 1
-    else
-        echo "✅ articles.json berhasil diperbarui dengan $total_articles artikel!"
-    fi
+if ! command -v jq &> /dev/null; then
+    echo "⚠️ jq tidak ditemukan! Install dengan 'sudo apt install jq'"
+    exit 1
+fi
+
+if ! jq . "$OUTPUT_FILE" > /dev/null 2>&1; then
+    echo "❌ JSON tidak valid! Periksa kembali articles.json."
+    exit 1
 else
-    echo "⚠️ jq tidak terinstall, tidak bisa validasi JSON otomatis."
+    echo "✅ articles.json berhasil diperbarui dengan $total_articles artikel!"
 fi
 
 # Commit dan push jika ada perubahan
