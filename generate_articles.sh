@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Output file JSON
-OUTPUT_FILE="articles.json"
+OUTPUT_FILE="beritaterkini/articles.json"
 
 # Cari semua file HTML (kecuali index.html) dan ambil hanya nama filenya
 ARTICLE_FILES=$(find . -type f -name "*.html" ! -name "index.html" -printf "%P\n")
