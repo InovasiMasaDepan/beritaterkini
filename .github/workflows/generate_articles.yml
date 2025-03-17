@@ -41,8 +41,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}  # Pakai GH_PAT, bukan default token
         run: |
           set -e
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
+         git config --global user.name "github-actions[bot]"
+git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/InovasiMasaDepan/beritaterkini.git
 
