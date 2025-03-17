@@ -16,36 +16,18 @@ jobs:
 
       - name: Update articles.json
         run: |
-          mkdir -p beritaterkini  # Pastikan folder beritaterkini ada
-
-          ARTICLES_FILE="beritaterkini/articles.json"
-          TEMP_FILE="beritaterkini/temp_articles.json"
+          ARTICLES_FILE="articles.json"
+          TEMP_FILE="temp_articles.json"
           echo "[" > $TEMP_FILE
           
-          # Loop semua file HTML dalam folder beritaterkini/ kecuali index.html
-          for file in beritaterkini/*.html; do
-            if [[ "$file" != "beritaterkini/index.html" ]]; then
-              title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
-              description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$file")
-              image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$file")
+          # Loop semua file HTML di root kecuali index.html
+          for file in *.html; do
+            if [[ "$file" != "index.html" ]]; then
+              title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file" || echo "Judul Tidak Ditemukan")
+              description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$file" || echo "Berita terbaru dari Inovasi Masa Depan")
+              image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$file" || echo "https://inovasimasadepan.github.io/beritaterkini/default-thumbnail.jpg")
               link="https://inovasimasadepan.github.io/$file"
 
-              # Jika title kosong, kasih default
-              if [[ -z "$title" ]]; then
-                title="Judul Tidak Ditemukan"
-              fi
-
-              # Jika description kosong, kasih default
-              if [[ -z "$description" ]]; then
-                description="Berita terbaru dari Inovasi Masa Depan"
-              fi
-
-              # Jika image kosong, kasih default placeholder
-              if [[ -z "$image" ]]; then
-                image="https://inovasimasadepan.github.io/beritaterkini/default-thumbnail.jpg"
-              fi
-
-              # Tambahkan data ke JSON
               echo "  {\"title\": \"$title\", \"description\": \"$description\", \"image\": \"$image\", \"link\": \"$link\"}," >> $TEMP_FILE
             fi
           done
@@ -59,19 +41,17 @@ jobs:
 
       - name: Generate sitemap.xml
         run: |
-          mkdir -p beritaterkini  # Pastikan folder ada sebelum proses
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > sitemap.xml
+          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> sitemap.xml
 
-          echo '<?xml version="1.0" encoding="UTF-8"?>' > beritaterkini/sitemap.xml
-          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> beritaterkini/sitemap.xml
-
-          for file in beritaterkini/*.html; do
-            echo "  <url>" >> beritaterkini/sitemap.xml
-            echo "    <loc>https://inovasimasadepan.github.io/$file</loc>" >> beritaterkini/sitemap.xml
-            echo "    <lastmod>$(date -u +"%Y-%m-%dT%H:%M:%SZ")</lastmod>" >> beritaterkini/sitemap.xml
-            echo "  </url>" >> beritaterkini/sitemap.xml
+          for file in *.html; do
+            echo "  <url>" >> sitemap.xml
+            echo "    <loc>https://inovasimasadepan.github.io/$file</loc>" >> sitemap.xml
+            echo "    <lastmod>$(date -u +"%Y-%m-%dT%H:%M:%SZ")</lastmod>" >> sitemap.xml
+            echo "  </url>" >> sitemap.xml
           done
 
-          echo '</urlset>' >> beritaterkini/sitemap.xml
+          echo '</urlset>' >> sitemap.xml
 
       - name: Commit and push changes
         env:
@@ -85,6 +65,6 @@ jobs:
           git fetch origin main
           git reset --hard origin/main
           
-          git add beritaterkini/articles.json beritaterkini/sitemap.xml
+          git add articles.json sitemap.xml
           git commit -m "Update articles.json & sitemap.xml" || echo "No changes to commit"
           git push origin main
