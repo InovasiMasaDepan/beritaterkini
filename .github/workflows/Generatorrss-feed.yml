@@ -1,99 +1,100 @@
 name: Generate RSS Feed
- 
- on:
-   push:
-     branches:
-       - main
-   workflow_dispatch:
- 
- jobs:
-   update-rss:
-     runs-on: ubuntu-latest
- 
-     steps:
-       - name: Checkout repository
-         uses: actions/checkout@v3
-         with:
-           fetch-depth: 0  # Ambil semua history buat mencegah konflik
- 
-       - name: Generate RSS Feed
-         run: |
-           set -eo pipefail
- 
-           if [[ ! -f articles.json ]]; then
-             echo "⚠️ File articles.json tidak ditemukan! RSS feed tidak diperbarui."
-             exit 1
-           fi
- 
-           if [[ ! -s articles.json ]]; then
-             echo "⚠️ File articles.json kosong! RSS feed tidak diperbarui."
-             exit 1
-           fi
- 
-           if ! jq -e . articles.json > /dev/null 2>&1; then
-             echo "❌ File articles.json tidak valid JSON!"
-             exit 1
-           fi
- 
-           echo '<?xml version="1.0" encoding="UTF-8"?>' > feed.xml
-           echo '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">' >> feed.xml
-           echo '<channel>' >> feed.xml
-           echo '<title>Inovasi Masa Depan</title>' >> feed.xml
-           echo '<link>https://inovasimasadepan.github.io/</link>' >> feed.xml
-           echo '<link>https://inovasimasadepan.github.io/beritaterkini/</link>' >> feed.xml
-           echo '<description>Berita, Informasi, dan Update Terkini</description>' >> feed.xml
-           echo '<language>id</language>' >> feed.xml
-           echo '<atom:link href="https://inovasimasadepan.github.io/beritaterkini/feed.xml" rel="self" type="application/rss+xml"/>' >> feed.xml
- 
-           jq -c '.[]' articles.json | while read -r i; do
-             title=$(echo "$i" | jq -r '.title')
-             link=$(echo "$i" | jq -r '.link')
-             desc=$(echo "$i" | jq -r '.description')
-             pubDate=$(echo "$i" | jq -r '.pubDate // empty')
-             category=$(echo "$i" | jq -r '.category // "Umum"')
-             banner=$(echo "$i" | jq -r '.banner // empty')
- 
-             # Format tanggal
-             if [[ -z "$pubDate" ]]; then
-               pubDate=$(date -R)
-             else
-               pubDate=$(date -R -d "$pubDate" 2>/dev/null || date -R)
-             fi
- 
-             echo '<item>' >> feed.xml
-             echo "  <title><![CDATA[$title]]></title>" >> feed.xml
-             echo "  <link>$link</link>" >> feed.xml
-             echo "  <guid isPermaLink=\"true\">$link</guid>" >> feed.xml
-             echo "  <description><![CDATA[$desc]]></description>" >> feed.xml
-             echo "  <pubDate>$pubDate</pubDate>" >> feed.xml
-             echo "  <category><![CDATA[$category]]></category>" >> feed.xml
- 
-             # Tambahkan banner artikel kalau ada
-             if [[ -n "$banner" && "$banner" != "null" ]]; then
-               echo "  <media:content url=\"$banner\" type=\"image/jpeg\"/>" >> feed.xml
-             fi
- 
-             echo '</item>' >> feed.xml
-           done
- 
-           echo '</channel></rss>' >> feed.xml
- 
-       - name: Commit and push changes
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         run: |
-           git config --global user.email "actions@github.com"
-           git config --global user.name "github-actions"
- 
-           git fetch origin main
-           git checkout main
-           git pull --no-edit --rebase origin main || git pull --no-edit origin main || git reset --hard origin/main
- 
-           git add feed.xml
-           if git diff --cached --quiet; then
-             echo "✅ Tidak ada perubahan yang perlu di-push."
-             exit 0
-           fi
- 
-           git commit -m "🔄 Update RSS feed"
-           git push origin main
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  update-rss:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ambil semua history buat mencegah konflik
+
+      - name: Generate RSS Feed
+        run: |
+          set -eo pipefail
+
+          if [[ ! -f articles.json ]]; then
+            echo "⚠️ File articles.json tidak ditemukan! RSS feed tidak diperbarui."
+            exit 1
+          fi
+
+          if [[ ! -s articles.json ]]; then
+            echo "⚠️ File articles.json kosong! RSS feed tidak diperbarui."
+            exit 1
+          fi
+
+          if ! jq -e . articles.json > /dev/null 2>&1; then
+            echo "❌ File articles.json tidak valid JSON!"
+            exit 1
+          fi
+
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > feed.xml
+          echo '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">' >> feed.xml
+          echo '<channel>' >> feed.xml
+          echo '<title>Inovasi Masa Depan</title>' >> feed.xml
+          echo '<link>https://inovasimasadepan.github.io/</link>' >> feed.xml
+          echo '<link>https://inovasimasadepan.github.io/beritaterkini/</link>' >> feed.xml
+          echo '<description>Berita, Informasi, dan Update Terkini</description>' >> feed.xml
+          echo '<language>id</language>' >> feed.xml
+          echo '<atom:link href="https://inovasimasadepan.github.io/beritaterkini/feed.xml" rel="self" type="application/rss+xml"/>' >> feed.xml
+
+          jq -c '.[]' articles.json | while read -r i; do
+            title=$(echo "$i" | jq -r '.title')
+            filename=$(basename "$(echo "$i" | jq -r '.link')")
+            link="https://inovasimasadepan.github.io/beritaterkini/$filename"
+            desc=$(echo "$i" | jq -r '.description')
+            pubDate=$(echo "$i" | jq -r '.pubDate // empty')
+            category=$(echo "$i" | jq -r '.category // "Umum"')
+            banner=$(echo "$i" | jq -r '.image // empty')
+
+            # Format tanggal
+            if [[ -z "$pubDate" ]]; then
+              pubDate=$(date -R)
+            else
+              pubDate=$(date -R -d "$pubDate" 2>/dev/null || date -R)
+            fi
+
+            echo '<item>' >> feed.xml
+            echo "  <title><![CDATA[$title]]></title>" >> feed.xml
+            echo "  <link>$link</link>" >> feed.xml
+            echo "  <guid isPermaLink=\"true\">$link</guid>" >> feed.xml
+            echo "  <description><![CDATA[$desc]]></description>" >> feed.xml
+            echo "  <pubDate>$pubDate</pubDate>" >> feed.xml
+            echo "  <category><![CDATA[$category]]></category>" >> feed.xml
+
+            # Tambahkan banner artikel kalau ada
+            if [[ -n "$banner" && "$banner" != "null" ]]; then
+              echo "  <media:content url=\"$banner\" type=\"image/jpeg\"/>" >> feed.xml
+            fi
+
+            echo '</item>' >> feed.xml
+          done
+
+          echo '</channel></rss>' >> feed.xml
+
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions"
+
+          git fetch origin main
+          git checkout main
+          git pull --no-edit --rebase origin main || git pull --no-edit origin main || git reset --hard origin/main
+
+          git add feed.xml
+          if git diff --cached --quiet; then
+            echo "✅ Tidak ada perubahan yang perlu di-push."
+            exit 0
+          fi
+
+          git commit -m "🔄 Update RSS feed"
+          git push origin main
