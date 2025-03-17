@@ -3,8 +3,8 @@
 # Output file JSON
 OUTPUT_FILE="articles.json"
 
-# Cari semua file HTML (kecuali index.html) di mana saja dalam repo
-ARTICLE_FILES=$(find . -type f -name "*.html" ! -name "index.html")
+# Cari semua file HTML (kecuali index.html) dan ambil hanya nama filenya
+ARTICLE_FILES=$(find . -type f -name "*.html" ! -name "index.html" -printf "%P\n")
 
 # Hitung jumlah artikel
 ARTICLE_COUNT=$(echo "$ARTICLE_FILES" | wc -l)
@@ -20,17 +20,15 @@ echo "[" > "$OUTPUT_FILE"
 counter=0
 
 # Loop semua file HTML
-while IFS= read -r file; do
-    filename=$(basename -- "$file")
-
+while IFS= read -r filename; do
     # Ambil title dari tag <title>
-    title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file" | head -1 | sed 's/"/\\"/g')
+    title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$filename" | head -1 | sed 's/"/\\"/g')
 
     # Ambil deskripsi dari meta tag <meta name="description">
-    description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$file" | head -1 | sed 's/"/\\"/g')
+    description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$filename" | head -1 | sed 's/"/\\"/g')
 
     # Ambil gambar dari meta tag <meta property="og:image">
-    image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$file" | head -1)
+    image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$filename" | head -1)
 
     # Jika title tidak ditemukan, gunakan nama file tanpa .html
     if [[ -z "$title" ]]; then
@@ -48,7 +46,7 @@ while IFS= read -r file; do
     fi
 
     # Gunakan format link yang benar
-    link="https://inovasimasadepan.github.io/beritaterkini/$filename"
+    link="https://inovasimasadepan.github.io/$filename"
 
     echo "✅ Processing: $filename ($title)"  
 
