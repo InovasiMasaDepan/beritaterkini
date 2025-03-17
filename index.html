@@ -1,184 +1,70 @@
-<!DOCTYPE html>
-<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <title>Inovasi Masa Depan - Berita Teknologi & Bisnis Terkini</title>
-    
-    <meta name="description" content="Dapatkan berita terbaru tentang teknologi, bisnis digital, dan tren industri! Temukan informasi menarik setiap hari.">
-    <meta name="robots" content="index, follow">
+
+    <meta name="description" content="Berita, Informasi, dan Panduan Terkini tentang Game Kasino dan Hiburan Digital">
+    <meta name="robots" content="max-image-preview:large, index, follow">
     <meta name="author" content="InovasiMasaDepan">
-    <link rel="canonical" href="https://inovasimasadepan.github.io/beritaterkini/">
+    <meta name="keywords" content="berita teknologi, Panduan Kasino, rtp live, startup, Game Kasino, berita viral">
+@@ -29,6 +29,10 @@
+        padding: 20px;
+        font-size: 1.5rem;
+    }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        header {
-            background: #0073e6;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 1.5rem;
-        }
-        nav {
-            background: #005bb5;
-            text-align: center;
-            padding: 10px;
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        nav ul li {
-            margin: 5px 15px;
-        }
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-        nav ul li a:hover {
-            color: #ffcc00;
-        }
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 10px;
-        }
-        .news-item {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease-in-out;
-        }
-        .news-item:hover {
-            transform: scale(1.03);
-        }
-        .news-item img {
-            width: 100%;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            object-fit: cover;
-            background-color: #ddd;
-            loading: lazy;
-        }
-        .news-item a {
-            display: inline-block;
-            background: #0073e6;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background 0.3s, transform 0.2s;
-        }
-        .news-item a:hover {
-            background: #005bb5;
-            transform: scale(1.05);
-        }
-        footer {
-            text-align: center;
-            padding: 10px;
-            background: #222;
-            color: white;
-            font-size: 0.9rem;
-            margin-top: 20px;
-        }
+
+
+    nav {
+        background: #005bb5;
+        text-align: center;
+@@ -68,6 +72,11 @@
+    .news-item:hover {
+        transform: scale(1.03);
+    }
+
+
+
+
+
+    .news-item a {
+        display: inline-block;
+        background: #0073e6;
+@@ -92,21 +101,21 @@
+    }
     </style>
+
+    <!-- Google Subscribe with Google (SwG) Basic -->
+    <script async type="application/javascript"
+        src="https://news.google.com/swg/js/v1/swg-basic.js"></script>
 </head>
 <body>
     <header>
         <h1>Inovasi Masa Depan</h1>
-        <h2>Berita, Informasi, dan Update Terkini</h2>
+        <p>Berita, Informasi, dan Update Terkini</p>
     </header>
     <nav>
         <ul>
-            <li><a href="#">Teknologi</a></li>
-            <li><a href="#">Bisnis</a></li>
-            <li><a href="#">Startup</a></li>
-            <li><a href="#">Inovasi</a></li>
+            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">PragmaticPlay</a></li>
+            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">PgSoft</a></li>
+            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">IdnSlot</a></li>
+            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">Poker</a></li>
         </ul>
     </nav>
 
-    <div class="news-grid" id="news-container">
-        <p>🔄 Memuat berita terbaru...</p>
-    </div>
+@@ -136,6 +145,7 @@ <h1>Inovasi Masa Depan</h1>
+                data.forEach(article => {
+                    let articleHTML = `
+                        <div class="news-item">
 
-    <footer>
-        &copy; 2025 Inovasi Masa Depan - Semua Hak Cipta Dilindungi
-    </footer>
-
-    <script>
-document.addEventListener("DOMContentLoaded", async function () {
-    try {
-        let response = await fetch("https://inovasimasadepan.github.io/beritaterkini/articles.json?t=" + new Date().getTime());
-        console.log("🔍 Response status:", response.status); // Cek status HTTP response
-        
-        if (!response.ok) throw new Error("Gagal memuat articles.json");
-        
-        let data = await response.json();
-        console.log("✅ Data loaded:", data); // Tampilkan data di console
-        
-        let container = document.getElementById("news-container");
-        container.innerHTML = "";
-
-        if (!Array.isArray(data) || data.length === 0) {
-            container.innerHTML = "<p style='color:red;'>⚠️ Tidak ada berita untuk ditampilkan.</p>";
-            return;
-        }
-
-        data.forEach(article => {
-            console.log("📌 Artikel:", article); // Debug setiap artikel
-            if (!article.title || !article.description || !article.image || !article.link) return;
-
-            let articleDiv = document.createElement("div");
-            articleDiv.classList.add("news-item");
-
-            let title = document.createElement("h3");
-            title.textContent = article.title;
-
-            let description = document.createElement("p");
-            description.textContent = article.description;
-
-            let image = document.createElement("img");
-            image.src = article.image;
-            image.alt = article.title;
-            image.loading = "lazy";
-            image.onerror = function () {
-                this.src = "https://via.placeholder.com/300x200?text=No+Image";
-            };
-
-            let link = document.createElement("a");
-            link.href = article.link;
-            link.textContent = "Baca selengkapnya";
-            link.target = "_blank";
-
-            articleDiv.appendChild(image);
-            articleDiv.appendChild(title);
-            articleDiv.appendChild(description);
-            articleDiv.appendChild(link);
-
-            container.appendChild(articleDiv);
+                            <h3>${article.title}</h3>
+                            <p>${article.description}</p>
+                            <a href="${article.link}" target="_blank">Baca selengkapnya</a>
+@@ -161,5 +171,6 @@ <h3>${article.title}</h3>
         });
-    } catch (error) {
-        console.error("❌ Error:", error);
-        document.getElementById("news-container").innerHTML = "<p style='color:red;'>⚠️ Gagal memuat berita!</p>";
-    }
-});
-</script>
+      });
+    </script>
 
+</body>
+</html>
