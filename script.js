@@ -18,8 +18,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             articles.forEach(article => {
                 const articleElement = document.createElement("article");
+
+                // Pastikan link selalu memiliki "/beritaterkini/"
+                let fixedLink = article.link.startsWith("/beritaterkini/") 
+                    ? article.link 
+                    : "/beritaterkini/" + article.link;
+
                 articleElement.innerHTML = `
-                    <h3><a href="${article.link}">${article.title}</a></h3>
+                    <h3><a href="${fixedLink}">${article.title}</a></h3>
                     <p>${article.description}</p>
                 `;
                 newsContainer.appendChild(articleElement);
