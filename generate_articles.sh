@@ -60,8 +60,8 @@ while IFS= read -r filepath; do
     fi
 
     # Escape karakter yang bisa merusak JSON
-    title=$(echo "$title" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
-    description=$(echo "$description" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+    title=$(echo "$title" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\t/ /g' | sed 's/\r//g' | sed 's/\n/ /g')
+    description=$(echo "$description" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\t/ /g' | sed 's/\r//g' | sed 's/\n/ /g')
 
     # Link yang sesuai dengan struktur folder beritaterkini
     link="https://inovasimasadepan.github.io/beritaterkini/$relative_path"
@@ -81,14 +81,13 @@ while IFS= read -r filepath; do
         comma=""
     fi
 
-    cat <<EOF >> "$OUTPUT_FILE"
-    {
-        "title": "$title",
-        "description": "$description",
-        "link": "$link",
-        "image": "$image"
-    }$comma
-EOF
+    # Tambahkan ke JSON
+    echo "  {" >> "$OUTPUT_FILE"
+    echo "    \"title\": \"$title\"," >> "$OUTPUT_FILE"
+    echo "    \"description\": \"$description\"," >> "$OUTPUT_FILE"
+    echo "    \"link\": \"$link\"," >> "$OUTPUT_FILE"
+    echo "    \"image\": \"$image\"" >> "$OUTPUT_FILE"
+    echo "  }$comma" >> "$OUTPUT_FILE"
 
 done <<< "$ARTICLE_FILES"
 
@@ -110,8 +109,9 @@ fi
 # Commit dan push jika ada perubahan
 if git diff --quiet "$OUTPUT_FILE"; then
     echo "✅ Tidak ada perubahan pada articles.json, tidak perlu commit."
-else
-    git add "$OUTPUT_FILE"
-    git commit -m "🔄 Update articles.json otomatis"
-    git push origin main
+    exit 0
 fi
+
+git add "$OUTPUT_FILE"
+git commit -m "🔄 Update articles.json otomatis"
+git push origin main
