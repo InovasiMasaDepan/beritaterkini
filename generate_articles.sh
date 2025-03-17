@@ -3,7 +3,7 @@
 # Output file JSON
 OUTPUT_FILE="beritaterkini/articles.json"
 
-# Cari semua file HTML dalam folder "beritaterkini" (kecuali index.html)
+# Cari semua file HTML di dalam folder "beritaterkini" (kecuali index.html)
 ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html" -printf "%P\n")
 
 # Hitung jumlah artikel
@@ -22,7 +22,7 @@ counter=0
 # Loop semua file HTML
 while IFS= read -r filename; do
     filepath="beritaterkini/$filename"
-    
+
     # Ambil title dari tag <title>
     title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$filepath" | head -1 | sed 's/"/\\"/g')
 
@@ -57,7 +57,7 @@ while IFS= read -r filename; do
     if [[ $counter -eq $ARTICLE_COUNT ]]; then
         comma=""
     else
-        comma="," 
+        comma=","
     fi
 
     cat <<EOF >> "$OUTPUT_FILE"
