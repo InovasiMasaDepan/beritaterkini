@@ -3,10 +3,10 @@ name: Update Articles JSON
 on:
   push:
     paths:
-      - "**/*.html"  # Jalankan jika ada perubahan file HTML di mana saja
+      - "**/*.html"  # Jalan jika ada perubahan file HTML
   schedule:
     - cron: '0 * * * *'  # Jalan setiap jam
-  workflow_dispatch:  # Bisa dijalankan manual juga
+  workflow_dispatch:  # Bisa dijalankan manual
 
 jobs:
   update-json:
@@ -16,47 +16,40 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Pastikan seluruh riwayat git tersedia
+          fetch-depth: 0
+
+      - name: Pastikan generate_articles.sh bisa dijalankan
+        run: chmod +x generate_articles.sh
 
       - name: Jalankan generate_articles.sh
         run: |
-          set -e  # Stop jika ada error
-          chmod +x generate_articles.sh
+          set -e
           ./generate_articles.sh || { echo "❌ Script gagal!"; exit 1; }
 
       - name: Debug - Periksa isi articles.json
         run: |
           echo "📂 Isi articles.json setelah generate:"
-          cat beritaterkini/articles.json
-          echo "🔍 Cek apakah kosong..."
-          if [[ ! -s beritaterkini/articles.json ]]; then
-            echo "❌ articles.json kosong! Pastikan script berhasil."
-            exit 1
-          fi
+          cat articles.json || { echo "❌ articles.json tidak ditemukan!"; exit 1; }
 
       - name: Periksa perubahan pada articles.json
         run: |
           git status
-          git diff --stat beritaterkini/articles.json
+          git diff --stat articles.json
 
       - name: Commit & Push Perubahan
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}  # Menggunakan token yang benar dari repository secrets
+          GH_TOKEN: ${{ secrets.GH_PAT }}  # Pakai GH_PAT, bukan default token
         run: |
-          set -e  # Stop jika ada error
+          set -e
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
-          # Gunakan token yang benar untuk autentikasi
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/InovasiMasaDepan/beritaterkini.git
 
-          # Tarik perubahan terbaru untuk menghindari konflik
           git pull --rebase origin main || echo "⚠️ Tidak bisa pull, lanjut commit."
 
-          # Tambahkan perubahan jika ada
-          git add beritaterkini/articles.json
+          git add articles.json
 
-          # Cek apakah ada perubahan sebelum commit
           if git diff --cached --quiet; then
             echo "✅ Tidak ada perubahan pada articles.json. Tidak perlu commit."
             exit 0
