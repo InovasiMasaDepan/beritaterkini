@@ -13,22 +13,21 @@ fi
 # Cari semua file HTML di dalam folder "beritaterkini" (kecuali index.html)
 ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html")
 
-# Debugging: Tampilkan lokasi dan file yang ditemukan
-echo "📂 Current directory: $(pwd)"
-echo "🔍 Files ditemukan:"
-echo "$ARTICLE_FILES"
-
 # Hitung jumlah artikel
-ARTICLE_COUNT=$(echo "$ARTICLE_FILES" | wc -l)
+ARTICLE_COUNT=$(echo "$ARTICLE_FILES" | wc -l | tr -d ' ')
 
 # Jika tidak ada artikel, buat file JSON kosong
-if [[ -z "$ARTICLE_FILES" ]]; then
+if [[ -z "$ARTICLE_FILES" || "$ARTICLE_COUNT" -eq 0 ]]; then
     echo "⚠️ Tidak ada artikel ditemukan!"
     echo "[]" > "$OUTPUT_FILE"
     exit 0
 fi
 
-# Mulai JSON
+# Debugging: Tampilkan file yang ditemukan
+echo "📂 Current directory: $(pwd)"
+echo "🔍 Files ditemukan: $ARTICLE_FILES"
+
+# Mulai JSON array
 echo "[" > "$OUTPUT_FILE"
 
 counter=0
@@ -37,13 +36,13 @@ while IFS= read -r filepath; do
     relative_path=${filepath#beritaterkini/}
 
     # Ambil title dari tag <title>
-    title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$filepath" | head -1 | sed 's/"/\\"/g')
+    title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$filepath" | head -1 | sed -E 's/"/\\"/g' | tr -d '\n\r')
 
     # Ambil deskripsi dari meta tag <meta name="description">
-    description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$filepath" | head -1 | sed 's/"/\\"/g')
+    description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$filepath" | head -1 | sed -E 's/"/\\"/g' | tr -d '\n\r')
 
     # Ambil gambar dari meta tag <meta property="og:image">
-    image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$filepath" | head -1)
+    image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$filepath" | head -1 | tr -d '\n\r')
 
     # Jika title tidak ditemukan, gunakan nama file tanpa .html
     if [[ -z "$title" ]]; then
@@ -60,7 +59,7 @@ while IFS= read -r filepath; do
         image="https://inovasimasadepan.github.io/default-thumbnail.jpg"
     fi
 
-    # Escape karakter yang bisa merusak JSON
+    # Escape karakter JSON yang bisa merusak format
     title=$(echo "$title" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
     description=$(echo "$description" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
 
@@ -82,6 +81,7 @@ while IFS= read -r filepath; do
         comma=","
     fi
 
+    # Tambahkan data ke JSON
     cat <<EOF >> "$OUTPUT_FILE"
     {
         "title": "$title",
@@ -93,12 +93,12 @@ EOF
 
 done <<< "$ARTICLE_FILES"
 
+# Tutup JSON array
 echo "]" >> "$OUTPUT_FILE"
 
 # Validasi JSON jika ada `jq`
 if command -v jq &> /dev/null; then
-    jq . "$OUTPUT_FILE" > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
+    if ! jq . "$OUTPUT_FILE" > /dev/null 2>&1; then
         echo "❌ JSON tidak valid! Periksa kembali articles.json."
         exit 1
     else
@@ -108,11 +108,17 @@ else
     echo "⚠️ jq tidak terinstall, tidak bisa validasi JSON otomatis."
 fi
 
-# Commit dan push jika ada perubahan
-if git diff --quiet "$OUTPUT_FILE"; then
-    echo "✅ Tidak ada perubahan pada articles.json, tidak perlu commit."
+# Pastikan file ada sebelum `git add`
+if [[ -f "$OUTPUT_FILE" ]]; then
+    # Commit dan push jika ada perubahan
+    if git diff --quiet "$OUTPUT_FILE"; then
+        echo "✅ Tidak ada perubahan pada articles.json, tidak perlu commit."
+    else
+        git add "$OUTPUT_FILE"
+        git commit -m "🔄 Update articles.json otomatis"
+        git push origin main
+    fi
 else
-    git add "$OUTPUT_FILE"
-    git commit -m "🔄 Update articles.json otomatis"
-    git push origin main
+    echo "❌ Gagal membuat articles.json!"
+    exit 1
 fi
