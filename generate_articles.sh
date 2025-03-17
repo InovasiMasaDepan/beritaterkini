@@ -3,6 +3,13 @@
 # Output file JSON
 OUTPUT_FILE="beritaterkini/articles.json"
 
+# Pastikan folder "beritaterkini" ada
+if [[ ! -d "beritaterkini" ]]; then
+    echo "⚠️ Folder 'beritaterkini' tidak ditemukan!"
+    echo "[]" > "$OUTPUT_FILE"
+    exit 0
+fi
+
 # Cari semua file HTML di dalam folder "beritaterkini" (kecuali index.html)
 ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html")
 
@@ -53,11 +60,11 @@ while IFS= read -r filepath; do
         image="https://inovasimasadepan.github.io/default-thumbnail.jpg"
     fi
 
-    # Perbaikan format JSON agar valid
+    # Escape karakter yang bisa merusak JSON
     title=$(echo "$title" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
     description=$(echo "$description" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
 
-    # Buat link
+    # Buat link artikel
     link="https://inovasimasadepan.github.io/beritaterkini/$relative_path"
 
     # Debugging: Tampilkan data yang diproses
@@ -102,10 +109,10 @@ else
 fi
 
 # Commit dan push jika ada perubahan
-if [[ $(git status --porcelain "$OUTPUT_FILE") ]]; then
-    git add "$OUTPUT_FILE"
-    git commit -m "Update articles.json otomatis"
-    git push origin main
-else
+if git diff --quiet "$OUTPUT_FILE"; then
     echo "✅ Tidak ada perubahan pada articles.json, tidak perlu commit."
+else
+    git add "$OUTPUT_FILE"
+    git commit -m "🔄 Update articles.json otomatis"
+    git push origin main
 fi
