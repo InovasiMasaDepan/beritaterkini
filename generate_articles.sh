@@ -64,7 +64,7 @@ while IFS= read -r filepath; do
     title=$(echo "$title" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
     description=$(echo "$description" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
 
-    # Buat link artikel
+    # Link yang sesuai dengan struktur folder beritaterkini
     link="https://inovasimasadepan.github.io/beritaterkini/$relative_path"
 
     # Debugging: Tampilkan data yang diproses
