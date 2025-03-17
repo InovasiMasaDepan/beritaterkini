@@ -1,4 +1,1 @@
-echo "[]" > beritaterkini/articles.json
-git add beritaterkini/articles.json
-git commit -m "Init articles.json"
-git push origin main
+[]
