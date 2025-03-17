@@ -1,9 +1,23 @@
-  - name: Update articles.json
+name: Update Articles & Sitemap
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  update-content:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Update articles.json
         run: |
           ARTICLES_FILE="articles.json"
           TEMP_FILE="temp_articles.json"
-          BASE_URL="https://inovasimasadepan.github.io/beritaterkini"
-          
           echo "[" > $TEMP_FILE
           
           # Loop semua file HTML kecuali index.html
@@ -12,19 +26,20 @@
               title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
               description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$file")
               image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$file")
+              link="https://inovasimasadepan.github.io/beritaterkini/$file"
 
-              # Default value jika deskripsi atau gambar tidak ditemukan
+              # Jika description kosong, kasih default
               if [[ -z "$description" ]]; then
                 description="Berita terbaru dari Inovasi Masa Depan"
               fi
+
+              # Jika image kosong, kasih default placeholder
               if [[ -z "$image" ]]; then
-                image="$BASE_URL/default.jpg"
+                image="https://inovasimasadepan.github.io/beritaterkini/default-thumbnail.jpg"
               fi
 
-              link="$BASE_URL/$file"
-
-              # Tambahkan data baru ke temp file
-              echo "  {\"title\": \"$title\", \"description\": \"$description\", \"link\": \"$link\", \"image\": \"$image\"}," >> $TEMP_FILE
+              # Tambahkan data ke JSON
+              echo "  {\"title\": \"$title\", \"description\": \"$description\", \"image\": \"$image\", \"link\": \"$link\"}," >> $TEMP_FILE
             fi
           done
           
