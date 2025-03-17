@@ -45,9 +45,9 @@ while IFS= read -r file; do
 
     # Buat link berdasarkan folder
     if [[ "$folder" == "." ]]; then
-        link="https://inovasimasadepan.github.io/$filename"
+        link="https://inovasimasadepan.github.io/beritaterkini/$filename"
     else
-        link="https://inovasimasadepan.github.io/$folder/$filename"
+        link="https://inovasimasadepan.github.io/beritaterkini/$folder/$filename"
     fi
 
     echo "✅ Processing: $filename ($title)"  
