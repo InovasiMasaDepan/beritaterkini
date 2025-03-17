@@ -4,7 +4,7 @@
 OUTPUT_FILE="beritaterkini/articles.json"
 
 # Cari semua file HTML di dalam folder "beritaterkini" (kecuali index.html)
-ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html" -printf "%P\n")
+ARTICLE_FILES=$(find beritaterkini -type f -name "*.html" ! -name "index.html")
 
 # Hitung jumlah artikel
 ARTICLE_COUNT=$(echo "$ARTICLE_FILES" | wc -l)
@@ -20,8 +20,9 @@ echo "[" > "$OUTPUT_FILE"
 counter=0
 
 # Loop semua file HTML
-while IFS= read -r filename; do
-    filepath="beritaterkini/$filename"
+while IFS= read -r filepath; do
+    filename=$(basename "$filepath")  # Ambil nama file saja
+    relative_path=${filepath#beritaterkini/}  # Hilangkan prefix folder
 
     # Ambil title dari tag <title>
     title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$filepath" | head -1 | sed 's/"/\\"/g')
@@ -47,10 +48,10 @@ while IFS= read -r filename; do
         image="https://inovasimasadepan.github.io/default-thumbnail.jpg"
     fi
 
-    # Gunakan format link yang sesuai (dalam "/beritaterkini/")
-    link="https://inovasimasadepan.github.io/beritaterkini/$filename"
+    # **Perbaikan utama: Link sekarang termasuk "beritaterkini/"**
+    link="https://inovasimasadepan.github.io/beritaterkini/$relative_path"
 
-    echo "✅ Processing: $filename ($title)"  
+    echo "✅ Processing: $relative_path ($title)"  
 
     # Tambahkan koma kecuali di elemen terakhir
     counter=$((counter+1))
