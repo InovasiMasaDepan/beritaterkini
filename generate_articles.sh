@@ -1,59 +1,123 @@
-name: Update Articles JSON
+#!/bin/bash
 
-on:
-  push:
-    paths:
-      - "**/*.html"
-  schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+set -e  # Stop jika ada error
 
-jobs:
-  update-json:
-    runs-on: ubuntu-latest
+# Output file JSON di root repo
+OUTPUT_FILE="articles.json"
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+# Cari semua file HTML di dalam repo (kecuali index.html)
+ARTICLE_FILES=$(find . -type f -name "*.html" ! -name "index.html" 2>/dev/null | sort)
 
-      - name: Beri izin eksekusi ke generate_articles.sh
-        run: chmod +x generate_articles.sh
+# Debugging: Pastikan ada file yang ditemukan
+echo "📂 Current directory: $(pwd)"
+echo "🔍 Files ditemukan:"
+echo "$ARTICLE_FILES"
 
-      - name: Jalankan generate_articles.sh
-        run: |
-          set -e
-          ./generate_articles.sh || { echo "❌ Script gagal!"; exit 1; }
+# Jika tidak ada artikel, buat file JSON kosong
+if [[ -z "$ARTICLE_FILES" ]]; then
+    echo "⚠️ Tidak ada artikel ditemukan! Membuat JSON kosong."
+    echo "[]" > "$OUTPUT_FILE"
+    exit 0
+fi
 
-      - name: Debug - Periksa isi articles.json
-        run: |
-          echo "📂 Isi articles.json setelah generate:"
-          cat articles.json || { echo "❌ articles.json tidak ditemukan!"; exit 1; }
+# Mulai JSON
+echo "[" > "$OUTPUT_FILE"
 
-      - name: Periksa perubahan pada articles.json
-        run: |
-          git status
-          git diff --stat articles.json
+counter=0
+total_articles=$(echo "$ARTICLE_FILES" | wc -l)
 
-      - name: Commit & Push Perubahan
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-        run: |
-          set -e
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
+while IFS= read -r filepath; do
+    if [[ -z "$filepath" ]]; then
+        continue
+    fi
 
-          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/InovasiMasaDepan/beritaterkini.git
+    filename=$(basename "$filepath")
+    relative_path=${filepath#./}  # Buang "./" di depan path
 
-          git pull --rebase origin main || echo "⚠️ Tidak bisa pull, lanjut commit."
+    # Ambil title dari tag <title>
+    title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$filepath" | head -1 | sed 's/"/\\"/g')
 
-          git add articles.json
+    # Ambil deskripsi dari meta tag <meta name="description">
+    description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$filepath" | head -1 | sed 's/"/\\"/g')
 
-          if git diff --cached --quiet; then
-            echo "✅ Tidak ada perubahan pada articles.json. Tidak perlu commit."
-            exit 0
-          fi
+    # Ambil gambar dari meta tag <meta property="og:image">
+    image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$filepath" | head -1)
 
-          git commit -m "🔄 Update articles.json otomatis"
-          git push origin main
+    # Jika title tidak ditemukan, gunakan nama file tanpa .html
+    if [[ -z "$title" ]]; then
+        title=$(echo "$filename" | sed 's/-/ /g' | sed 's/.html//g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
+    fi
+
+    # Jika deskripsi tidak ditemukan, pakai fallback
+    if [[ -z "$description" ]]; then
+        description="Baca artikel terbaru: $title"
+    fi
+
+    # Jika gambar tidak ditemukan, pakai default
+    if [[ -z "$image" ]]; then
+        image="https://inovasimasadepan.github.io/default-thumbnail.jpg"
+    fi
+
+    # Escape karakter yang bisa merusak JSON
+    title=$(echo "$title" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+    description=$(echo "$description" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+
+    # Link yang sesuai dengan struktur folder di GitHub Pages
+    link="https://inovasimasadepan.github.io/$relative_path"
+
+    # Debugging: Tampilkan data yang diproses
+    echo "📝 Artikel: $relative_path"
+    echo "   ➜ Title: $title"
+    echo "   ➜ Description: $description"
+    echo "   ➜ Image: $image"
+    echo "   ➜ Link: $link"
+
+    # Tambahkan koma kecuali di elemen terakhir
+    counter=$((counter+1))
+    if [[ $counter -lt $total_articles ]]; then
+        comma=","
+    else
+        comma=""
+    fi
+
+    # Tambahkan ke JSON
+    cat <<EOF >> "$OUTPUT_FILE"
+  {
+    "title": "$title",
+    "description": "$description",
+    "link": "$link",
+    "image": "$image"
+  }$comma
+EOF
+
+done <<< "$ARTICLE_FILES"
+
+echo "]" >> "$OUTPUT_FILE"
+
+# Debugging: Pastikan file JSON benar-benar dibuat
+if [[ ! -f "$OUTPUT_FILE" ]]; then
+    echo "❌ Gagal membuat articles.json!"
+    exit 1
+fi
+
+# Validasi JSON jika ada `jq`
+if command -v jq &> /dev/null; then
+    if ! jq . "$OUTPUT_FILE" > /dev/null 2>&1; then
+        echo "❌ JSON tidak valid! Periksa kembali articles.json."
+        exit 1
+    else
+        echo "✅ articles.json berhasil diperbarui dengan $total_articles artikel!"
+    fi
+else
+    echo "⚠️ jq tidak ditemukan! Lewati validasi JSON."
+fi
+
+# Commit dan push jika ada perubahan
+if git diff --quiet "$OUTPUT_FILE"; then
+    echo "✅ Tidak ada perubahan pada articles.json, tidak perlu commit."
+    exit 0
+fi
+
+git add "$OUTPUT_FILE"
+git commit -m "🔄 Update articles.json otomatis"
+git push origin main
