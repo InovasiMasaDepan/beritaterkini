@@ -20,11 +20,8 @@ if [[ -z "$ARTICLE_FILES" ]]; then
     exit 0
 fi
 
-# Mulai JSON
-echo "[" > "$OUTPUT_FILE"
-
-counter=0
-total_articles=$(echo "$ARTICLE_FILES" | wc -l)
+# Array JSON
+articles=()
 
 while IFS= read -r filepath; do
     if [[ -z "$filepath" ]]; then
@@ -76,27 +73,13 @@ while IFS= read -r filepath; do
     echo "   ➜ Image: $image"
     echo "   ➜ Link: $link"
 
-    # Tambahkan koma kecuali di elemen terakhir
-    counter=$((counter+1))
-    if [[ $counter -lt $total_articles ]]; then
-        comma=","
-    else
-        comma=""
-    fi
-
-    # Tambahkan ke JSON
-    cat <<EOF >> "$OUTPUT_FILE"
-  {
-    "title": "$title",
-    "description": "$description",
-    "link": "$link",
-    "image": "$image"
-  }$comma
-EOF
+    # Tambahkan data ke array JSON
+    articles+=("{\"title\": \"$title\", \"description\": \"$description\", \"link\": \"$link\", \"image\": \"$image\"}")
 
 done <<< "$ARTICLE_FILES"
 
-echo "]" >> "$OUTPUT_FILE"
+# Gabungkan array menjadi JSON valid
+echo "[${articles[*]}]" | jq '.' > "$OUTPUT_FILE"
 
 # Debugging: Pastikan file JSON benar-benar dibuat
 if [[ ! -f "$OUTPUT_FILE" ]]; then
@@ -104,17 +87,18 @@ if [[ ! -f "$OUTPUT_FILE" ]]; then
     exit 1
 fi
 
-# Validasi JSON jika ada `jq`
-if command -v jq &> /dev/null; then
-    if ! jq . "$OUTPUT_FILE" > /dev/null 2>&1; then
-        echo "❌ JSON tidak valid! Periksa kembali articles.json."
-        exit 1
-    else
-        echo "✅ articles.json berhasil diperbarui dengan $total_articles artikel!"
-    fi
+# Validasi JSON
+if jq . "$OUTPUT_FILE" > /dev/null 2>&1; then
+    total_articles=$(echo "$ARTICLE_FILES" | wc -l)
+    echo "✅ articles.json berhasil diperbarui dengan $total_articles artikel!"
 else
-    echo "⚠️ jq tidak ditemukan! Lewati validasi JSON."
+    echo "❌ JSON tidak valid! Periksa kembali articles.json."
+    exit 1
 fi
+
+# Pastikan Git dikonfigurasi agar bisa commit
+git config --global user.name "github-actions[bot]"
+git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
 # Commit dan push jika ada perubahan
 if git diff --quiet "$OUTPUT_FILE"; then
