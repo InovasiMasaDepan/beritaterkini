@@ -10,10 +10,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Pastikan semua riwayat commit diambil
+
+      - name: Pastikan direktori beritaterkini ada
+        run: mkdir -p beritaterkini
 
       - name: Generate articles.json
         run: |
-          mkdir -p beritaterkini
+          set -e
           ARTICLES_FILE="beritaterkini/articles.json"
           TEMP_FILE="beritaterkini/temp_articles.json"
           echo "[" > $TEMP_FILE
@@ -21,14 +26,10 @@ jobs:
           FILE_COUNT=0
           for file in $(find beritaterkini -type f -name "*.html"); do
             if [[ "$file" != "beritaterkini/index.html" ]]; then
-              title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file")
-              description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$file")
-              image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$file")
+              title=$(grep -oP '(?<=<title>).*?(?=</title>)' "$file" || echo "Judul Tidak Ditemukan")
+              description=$(grep -oP '(?<=<meta name="description" content=").*?(?=")' "$file" || echo "Berita terbaru dari Inovasi Masa Depan")
+              image=$(grep -oP '(?<=<meta property="og:image" content=").*?(?=")' "$file" || echo "https://inovasimasadepan.github.io/beritaterkini/default-thumbnail.jpg")
               link="https://inovasimasadepan.github.io/${file#beritaterkini/}"
-
-              [[ -z "$title" ]] && title="Judul Tidak Ditemukan"
-              [[ -z "$description" ]] && description="Berita terbaru dari Inovasi Masa Depan"
-              [[ -z "$image" ]] && image="https://inovasimasadepan.github.io/beritaterkini/default-thumbnail.jpg"
 
               echo "  {\"title\": \"$title\", \"description\": \"$description\", \"image\": \"$image\", \"link\": \"$link\"}," >> $TEMP_FILE
               ((FILE_COUNT++))
@@ -44,30 +45,43 @@ jobs:
 
       - name: Validate JSON
         run: |
-          jq . beritaterkini/articles.json > /dev/null || (echo "File articles.json tidak valid JSON!" && exit 1)
+          if ! jq empty beritaterkini/articles.json; then
+            echo "❌ File articles.json tidak valid JSON!"
+            exit 1
+          fi
 
       - name: Generate sitemap.xml
         run: |
-          echo '<?xml version="1.0" encoding="UTF-8"?>' > beritaterkini/sitemap.xml
-          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> beritaterkini/sitemap.xml
+          set -e
+          SITEMAP_FILE="beritaterkini/sitemap.xml"
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > $SITEMAP_FILE
+          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> $SITEMAP_FILE
 
           for file in $(find beritaterkini -type f -name "*.html"); do
-            echo "  <url>" >> beritaterkini/sitemap.xml
-            echo "    <loc>https://inovasimasadepan.github.io/${file#beritaterkini/}</loc>" >> beritaterkini/sitemap.xml
-            echo "    <lastmod>$(date -u +"%Y-%m-%dT%H:%M:%SZ")</lastmod>" >> beritaterkini/sitemap.xml
-            echo "  </url>" >> beritaterkini/sitemap.xml
+            echo "  <url>" >> $SITEMAP_FILE
+            echo "    <loc>https://inovasimasadepan.github.io/${file#beritaterkini/}</loc>" >> $SITEMAP_FILE
+            echo "    <lastmod>$(date -u +"%Y-%m-%dT%H:%M:%SZ")</lastmod>" >> $SITEMAP_FILE
+            echo "  </url>" >> $SITEMAP_FILE
           done
 
-          echo '</urlset>' >> beritaterkini/sitemap.xml
+          echo '</urlset>' >> $SITEMAP_FILE
 
       - name: Commit and Push Changes
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
+          set -e
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${GH_PAT}@github.com/InovasiMasaDepan/beritaterkini.git
           
           git add beritaterkini/articles.json beritaterkini/sitemap.xml
-          git commit -m "Regenerate articles.json & sitemap.xml" || echo "No changes to commit"
-          git push origin main
+          
+          # Cek apakah ada perubahan sebelum commit
+          if git diff --cached --quiet; then
+            echo "✅ Tidak ada perubahan, tidak perlu commit."
+            exit 0
+          fi
+          
+          git commit -m "🔄 Regenerate articles.json & sitemap.xml"
+          git push origin main || { echo "❌ Gagal push!"; exit 1; }
