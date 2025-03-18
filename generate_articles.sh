@@ -97,8 +97,8 @@ else
 fi
 
 # Pastikan Git dikonfigurasi agar bisa commit
-git config --global user.name "github-actions[bot]"
-git config --global user.email "github-actions[bot]@users.noreply.github.com"
+git config --global user.name "netkiller" 
+git config --global user.email "muhamad.faqih190402@gmail.com"
 
 # Commit dan push jika ada perubahan
 if git diff --quiet "$OUTPUT_FILE"; then
