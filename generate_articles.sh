@@ -59,8 +59,12 @@ while IFS= read -r filepath; do
     fi
 
     # Escape karakter yang bisa merusak JSON
-    title=$(echo "$title" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
-    description=$(echo "$description" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g')
+    escape_json() {
+        echo "$1" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/\\/\\\\/g' | sed 's/"/\\"/g'
+    }
+
+    title=$(escape_json "$title")
+    description=$(escape_json "$description")
 
     # Link yang sesuai dengan struktur folder di GitHub Pages
     link="https://inovasimasadepan.github.io/$relative_path"
