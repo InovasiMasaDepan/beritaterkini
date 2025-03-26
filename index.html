@@ -14,166 +14,148 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
-    <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-    }
-    header {
-        background: #0073e6;
-        color: white;
-        text-align: center;
-        padding: 20px;
-        font-size: 1.5rem;
-    }
-    header h2 {
-        font-size: 1.2rem;
-        font-weight: normal;
-    }
-    nav {
-        background: #005bb5;
-        text-align: center;
-        padding: 10px;
-    }
-    nav ul {
-        list-style: none;
-    }
-    nav ul li {
-        display: inline;
-        margin: 0 15px;
-    }
-    nav ul li a {
-        color: white;
-        text-decoration: none;
-        font-weight: bold;
-        transition: color 0.3s;
-    }
-    nav ul li a:hover {
-        color: #ffcc00;
-    }
-    .news-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 10px;
-    }
-    .news-item {
-        background: white;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease-in-out;
-    }
-    .news-item:hover {
-        transform: scale(1.03);
-    }
-    .news-item img {
-        width: 100%;
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
-    .news-item a {
-        display: inline-block;
-        background: #0073e6;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 5px;
-        text-decoration: none;
-        font-weight: bold;
-        transition: background 0.3s, transform 0.2s;
-    }
-    .news-item a:hover {
-        background: #005bb5;
-        transform: scale(1.05);
-    }
-    footer {
-        text-align: center;
-        padding: 10px;
-        background: #222;
-        color: white;
-        font-size: 0.9rem;
-        margin-top: 20px;
-    }
+<style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e3e3e3;
+        }
+        header {
+            background-color: #ff6f61;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+        header p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        nav {
+            background-color: #333;
+            text-align: center;
+            padding: 15px 0;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 20px;
+        }
+        nav ul li a {
+            color: white;
+            font-size: 18px;
+            text-decoration: none;
+        }
+        nav ul li a:hover {
+            color: #ff6f61;
+        }
+        main {
+            padding: 30px;
+        }
+        section {
+            background-color: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #ff6f61;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        article {
+            margin-bottom: 20px;
+        }
+        article h3 {
+            color: #333;
+            font-size: 24px;
+        }
+        article p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
     </style>
-
-
-
-
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <h1>Inovasi Masa Depan</h1>
-        <h2>Berita, Informasi, dan Update Terkini</h2>
+        <h1>Inovasi Masadepan</h1>
+        <p>Berita, Informasi, dan Update Terkini dari Inovasi Masadepan Seluruh Dunia</p>
     </header>
+
+    <!-- Navigation -->
     <nav>
         <ul>
-            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">PragmaticPlay</a></li>
-            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">PgSoft</a></li>
-            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">IdnSlot</a></li>
-            <li><a href="https://inovasimasadepan.github.io/beritaterkini/">Poker</a></li>
+            <li><a href="#home">Beranda</a></li>
+            <li><a href="#news">Berita</a></li>
+            <li><a href="#trending">Tren</a></li>
+            <li><a href="#contact">Kontak</a></li>
         </ul>
     </nav>
 
-    <div class="news-grid" id="news-container">
-        <p>🔄 Memuat berita terbaru...</p>
-    </div>
+    <!-- Main Content -->
+    <main>
+        <!-- Section Berita -->
+        <section id="news">
+            <h2>Berita Inovasi Masadepan Terbaru</h2>
+            <article>
+                <p>Inovasi Masadepan hadir sebagai situs informasi terdepan bagi pecinta kasino online di Indonesia, menyajikan berbagai berita terkini seputar industri ini, termasuk RTP live dan game dengan RTP tinggi. Tahun 2025 menjadi saksi pesatnya pertumbuhan game kasino online, didukung oleh inovasi teknologi serta meningkatnya akses internet dan penggunaan smartphone.</p>
 
+                <h2>Program Inovatif dan Teknologi Modern</h2>
+                <p>Sebagai bagian dari ekosistem kasino online yang terus berkembang, berbagai platform gaming, termasuk Rejeki, meluncurkan program berbagi dan inovasi game yang menarik. Salah satu yang paling menonjol adalah <strong>Mahjong Ways</strong>, sebuah permainan yang menggabungkan elemen klasik mahjong dengan mekanisme slot modern. Dengan fitur free spins dan jackpot progresif bertema Inovasi Masadepan, game ini menjadi favorit para pemain yang mengutamakan efisiensi dalam strategi bermain.</p>
+                
+                <p>Selain itu, aplikasi mobile khusus Inovasi Masadepan memudahkan pemain dalam mengakses berbagai informasi terbaru, termasuk peta lokasi event, jadwal acara, dan fitur berbagi momen secara real-time di media sosial. Inisiatif ini juga menarik perhatian generasi muda yang gemar menikmati hiburan berkualitas sambil tetap mengikuti protokol kesehatan.</p>
+                
+                <h2>Tren Game Kasino Online dan Perkembangan Esports</h2>
+                <p>Industri kasino online di Indonesia terus mengalami lonjakan popularitas, terutama dengan meningkatnya permintaan terhadap game dengan RTP tinggi. Banyak pemain kini lebih selektif dalam memilih game yang memberikan peluang kemenangan lebih besar, termasuk mencari informasi seputar RTP live untuk memastikan keputusan bermain yang lebih strategis.</p>
+                
+                <p>Tak hanya itu, tren <strong>musik DJ</strong> juga semakin mendominasi dunia kasino online, menghadirkan pengalaman bermain yang lebih menghibur dan interaktif. Bagi sebagian pemain, irama musik DJ yang enerjik menjadi teman terbaik saat bermain, terutama ketika berburu jackpot atau menikmati putaran free spins.</p>
+                
+            </article>
+        </section>
+
+        <!-- Section Tren -->
+        <section id="trending">
+            <h2>Tren Terbaru</h2>
+            <article>
+                <h2>Peran Inovasi Masadepan dalam Memberikan Informasi Berkualitas</h2>
+                <p>Inovasi Masadepan berkomitmen untuk menyajikan informasi bergizi bagi para pemain, memastikan mereka mendapatkan wawasan terbaik sebelum memasuki dunia kasino online. Dengan fokus pada RTP live, strategi bermain, dan ulasan game dengan RTP tinggi, Inovasi Masadepan menjadi panduan utama bagi para pencari keberuntungan di dunia digital.</p>
+                
+                <p>Sementara itu, bagi yang ingin mengambil jeda sejenak dari permainan dan mencari suasana baru, banyak pemain memilih untuk <em>"kabur aja dulu"</em> dengan menikmati makan siang yang lezat sebelum kembali beraksi di platform kasino favorit mereka. Efisiensi dalam mengatur waktu bermain dan istirahat juga menjadi faktor penting dalam menikmati pengalaman kasino online secara optimal.</p>
+                
+                <p>Dengan kombinasi informasi terpercaya, teknologi canggih, dan hiburan berkualitas, Inovasi Masadepan terus menjadi sumber utama bagi para penggemar kasino online di Indonesia. Tetap ikuti update terbaru dan pastikan pengalaman bermain Anda semakin menyenangkan dan menguntungkan!</p>
+            </article>
+        </section>
+
+        <!-- Section Kontak -->
+        <section id="contact">
+            <h2>Kontak Kami</h2>
+            <p>Jika Anda memiliki pertanyaan atau ingin mengirimkan informasi berita, jangan ragu untuk menghubungi kami melalui email di <a href="mailto:contact@berita-Inovasi Masadepan.com">contact@berita-Inovasi Masadepan.com</a>.</p>
+        </section>
+    </main>
+
+    <!-- Footer -->
     <footer>
-        &copy; 2025 Inovasi Masa Depan - Semua Hak Cipta Dilindungi
+        <p>&copy; 2025 Berita-Inovasi Masadepan. Semua Hak Cipta Dilindungi.</p>
     </footer>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", async function () {
-            try {
-                let response = await fetch("https://inovasimasadepan.github.io/beritaterkini/articles.json?t=" + new Date().getTime());
-                if (!response.ok) throw new Error("Gagal memuat articles.json");
-
-                let data = await response.json();
-                let container = document.getElementById("news-container");
-                container.innerHTML = "";
-
-                if (data.length === 0) {
-                    container.innerHTML = "<p style='color:red;'>⚠️ Tidak ada berita untuk ditampilkan.</p>";
-                    return;
-                }
-
-                data.forEach(article => {
-                    let articleHTML = `
-                        <div class="news-item">
-                            <img src="${article.image}" alt="${article.title}" loading="lazy">
-                            <h3>${article.title}</h3>
-                            <p>${article.description}</p>
-                            <a href="${article.link}" target="_blank">Baca selengkapnya</a>
-                        </div>
-                    `;
-                    container.innerHTML += articleHTML;
-
-
-
-                });
-            } catch (error) {
-                console.error("❌ Error:", error);
-                document.getElementById("news-container").innerHTML = "<p style='color:red;'>⚠️ Gagal memuat berita!</p>";
-            }
-        });
-    </script>
-
-    <!-- Inisialisasi SwG Basic -->
-    <script>
-      (self.SWG_BASIC = self.SWG_BASIC || []).push( basicSubscriptions => {
-        basicSubscriptions.init({
-          type: "NewsArticle",
-          isPartOfType: ["Product"],
-          isPartOfProductId: "CAownPG5DA:openaccess",
-          clientOptions: { theme: "light", lang: "id" },
-        });
-      });
-    </script>
-
 </body>
 </html>
