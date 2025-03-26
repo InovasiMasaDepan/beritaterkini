@@ -23,8 +23,11 @@ jobs:
       - name: Install jq
         run: sudo apt-get install jq -y
 
-      - name: Run articles.sh
-        run: bash articles.sh
+      - name: Beri izin eksekusi pada skrip
+        run: chmod +x generate_articles.sh
+
+      - name: Jalankan generate_articles.sh
+        run: ./generate_articles.sh
 
       - name: Commit & Push jika ada perubahan
         run: |
